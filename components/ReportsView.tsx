@@ -1,8 +1,7 @@
-
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { GoogleGenAI } from "@google/genai";
 // FIX: Changed import paths to be relative.
-import { MOCK_ASSET_EVENT_LOG, MOCK_REVIEW_REPORTS } from '../constants';
+import { MOCK_ASSET_EVENT_LOG } from '../constants';
 import { Asset, ReviewReport, ReportStatus } from '../types';
 
 type PhotoWithPreview = {
@@ -350,12 +349,12 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
     );
 };
 
-const ReportsInReviewView: React.FC = () => {
+const ReportsInReviewView: React.FC<{ reports: ReviewReport[] }> = ({ reports }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<ReportStatus | '전체'>('전체');
 
     const filteredReports = useMemo(() => {
-        return MOCK_REVIEW_REPORTS
+        return reports
             .filter(report => report.status !== '승인됨')
             .filter(report => statusFilter === '전체' || report.status === statusFilter)
             .filter(report => 
@@ -363,7 +362,7 @@ const ReportsInReviewView: React.FC = () => {
                 report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (report.reviewer && report.reviewer.toLowerCase().includes(searchTerm.toLowerCase()))
             );
-    }, [searchTerm, statusFilter]);
+    }, [searchTerm, statusFilter, reports]);
     
     const getStatusAppearance = (status: ReportStatus) => {
         switch (status) {
@@ -479,18 +478,18 @@ const ReportsInReviewView: React.FC = () => {
     );
 };
 
-const ApprovedReportsView: React.FC = () => {
+const ApprovedReportsView: React.FC<{ reports: ReviewReport[] }> = ({ reports }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredReports = useMemo(() => {
-        return MOCK_REVIEW_REPORTS
+        return reports
             .filter(report => report.status === '승인됨')
             .filter(report => 
                 report.assetName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (report.approver && report.approver.toLowerCase().includes(searchTerm.toLowerCase()))
             );
-    }, [searchTerm]);
+    }, [searchTerm, reports]);
 
     const SafetyGradeBadge: React.FC<{ grade: string }> = ({ grade }) => {
         const getGradeColor = (g: string) => {
@@ -579,9 +578,10 @@ const ApprovedReportsView: React.FC = () => {
 interface ReportsViewProps {
   activeSubView: string;
   assets: Asset[];
+  reports: ReviewReport[];
 }
 
-const ReportsView: React.FC<ReportsViewProps> = ({ activeSubView, assets }) => {
+const ReportsView: React.FC<ReportsViewProps> = ({ activeSubView, assets, reports }) => {
   const subView = activeSubView.split(' > ')[1] || '새 리포트';
 
   const renderContent = () => {
@@ -589,9 +589,9 @@ const ReportsView: React.FC<ReportsViewProps> = ({ activeSubView, assets }) => {
       case '새 리포트':
         return <NewReportView assets={assets} />;
       case '검토 중':
-        return <ReportsInReviewView />;
+        return <ReportsInReviewView reports={reports} />;
       case '승인됨':
-        return <ApprovedReportsView />;
+        return <ApprovedReportsView reports={reports} />;
       default:
         return <NewReportView assets={assets} />;
     }

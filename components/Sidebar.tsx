@@ -87,6 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mode, activeView, setActiveView, togg
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
           >
+            {mode === 'user' && <option value="ALL_PROJECTS">전체 프로젝트</option>}
             {projects.map(project => (
               <option key={project.id} value={project.id}>
                 {project.name}

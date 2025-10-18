@@ -1,13 +1,13 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 // FIX: Changed import paths to be relative.
-import { MOCK_ASSETS, MOCK_THRESHOLDS_DEFAULT, MOCK_ANOMALIES } from '../constants';
+import { MOCK_ASSETS, MOCK_THRESHOLDS_DEFAULT } from '../constants';
 import { Sensor, Thresholds, Asset, Anomaly, AnomalyStatus } from '../types';
 import { LineChart } from './LineChart';
 
 
 interface ShmMonitorViewProps {
   activeSubView: string;
+  anomalies: Anomaly[];
 }
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
@@ -16,9 +16,18 @@ const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ chi
   </div>
 );
 
-const AnomalyAlertsView: React.FC = () => {
-    const [anomalies, setAnomalies] = useState<Anomaly[]>(MOCK_ANOMALIES);
-    const [selectedAnomalyId, setSelectedAnomalyId] = useState<string | null>(MOCK_ANOMALIES.find(a => a.status === 'New')?.id || MOCK_ANOMALIES[0]?.id || null);
+const AnomalyAlertsView: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies: anomaliesFromProp }) => {
+    const [anomalies, setAnomalies] = useState<Anomaly[]>(anomaliesFromProp);
+    const [selectedAnomalyId, setSelectedAnomalyId] = useState<string | null>(null);
+
+    useEffect(() => {
+        setAnomalies(anomaliesFromProp);
+        // Reset selection if it's no longer in the list, or if there's no selection
+        if (!selectedAnomalyId || !anomaliesFromProp.some(a => a.id === selectedAnomalyId)) {
+            const newSelection = anomaliesFromProp.find(a => a.status === 'New')?.id || anomaliesFromProp[0]?.id || null;
+            setSelectedAnomalyId(newSelection);
+        }
+    }, [anomaliesFromProp, selectedAnomalyId]);
 
     // Filters
     const [statusFilter, setStatusFilter] = useState<AnomalyStatus | 'ALL'>('ALL');
@@ -43,9 +52,9 @@ const AnomalyAlertsView: React.FC = () => {
 
     const uniqueAssets = useMemo(() => {
       const assetsMap = new Map<string, string>();
-      MOCK_ANOMALIES.forEach(a => assetsMap.set(a.assetId, a.assetName));
+      anomaliesFromProp.forEach(a => assetsMap.set(a.assetId, a.assetName));
       return Array.from(assetsMap, ([id, name]) => ({ id, name }));
-    }, []);
+    }, [anomaliesFromProp]);
 
     const getLevelAppearance = (level: '경고' | '위험') => {
         return level === '위험' 
@@ -288,7 +297,7 @@ const SensorExplanation: React.FC = () => {
         },
         {
           title: "온도계 (Temperature Sensor)",
-          icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5" /><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5" stroke="none" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" stroke="none" /><path d="M12 6.75v10.5" stroke="none" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" stroke="none" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" stroke="none" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" stroke="none" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /></svg>,
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5" /><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5" stroke="none" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" stroke="none" /><path d="M12 6.75v10.5" stroke="none" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" stroke="none" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" stroke="none" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /><path d="M13.5 4.5a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /><path d="M12 6.75v10.5" /><path d="M12 17.25a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /></svg>,
           description: "구조물 내/외부의 온도를 측정합니다. 온도의 변화는 재료의 팽창과 수축을 유발하여 구조물에 추가적인 응력을 발생시킬 수 있습니다. 온도 데이터를 통해 다른 센서(변위, 변형률) 측정값에서 열에 의한 영향을 분리하여 분석할 수 있습니다."
         }
     ];
@@ -446,17 +455,17 @@ const LiveStreamView: React.FC = () => {
 };
 
 
-const ShmMonitorView: React.FC<ShmMonitorViewProps> = ({ activeSubView }) => {
+const ShmMonitorView: React.FC<ShmMonitorViewProps> = ({ activeSubView, anomalies }) => {
   const subView = activeSubView.split(' > ')[1] || '이상 알림';
 
   const renderContent = () => {
     switch(subView) {
       case '이상 알림':
-        return <AnomalyAlertsView />;
+        return <AnomalyAlertsView anomalies={anomalies} />;
       case '라이브 스트림':
         return <LiveStreamView />;
       default:
-        return <AnomalyAlertsView />;
+        return <AnomalyAlertsView anomalies={anomalies} />;
     }
   }
 

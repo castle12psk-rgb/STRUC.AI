@@ -15,8 +15,8 @@ import PlaceholderView from './components/PlaceholderView';
 import { AssetDetailModal } from './components/AssetDetailModal';
 import { EventDetailModal } from './components/EventDetailModal';
 
-import { Mode, Asset, SensorReading, ProjectDetail, ReviewReport, EventLogEntry } from './types';
-import { MOCK_PROJECTS, MOCK_ASSETS, MOCK_SENSOR_READINGS, MOCK_REVIEW_REPORTS } from './constants';
+import { Mode, Asset, SensorReading, ProjectDetail, ReviewReport, EventLogEntry, Anomaly } from './types';
+import { MOCK_PROJECTS, MOCK_ASSETS, MOCK_SENSOR_READINGS, MOCK_REVIEW_REPORTS, MOCK_ANOMALIES } from './constants';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('user');
@@ -26,8 +26,11 @@ const App: React.FC = () => {
   const [assets, setAssets] = useState<Asset[]>(MOCK_ASSETS);
   const [readings, setReadings] = useState<SensorReading[]>(MOCK_SENSOR_READINGS);
   const [reports, setReports] = useState<ReviewReport[]>(MOCK_REVIEW_REPORTS);
-
-  const [selectedProjectId, setSelectedProjectId] = useState(MOCK_PROJECTS[0].id);
+  const [anomalies, setAnomalies] = useState<Anomaly[]>(MOCK_ANOMALIES);
+  
+  const ALL_PROJECTS_ID = 'ALL_PROJECTS';
+  
+  const [selectedProjectId, setSelectedProjectId] = useState(ALL_PROJECTS_ID);
 
   const [selectedAssetForDetail, setSelectedAssetForDetail] = useState<Asset | null>(null);
   const [isDetailModalMinimized, setIsDetailModalMinimized] = useState(false);
@@ -37,6 +40,13 @@ const App: React.FC = () => {
     setMode(prevMode => {
       const newMode = prevMode === 'user' ? 'admin' : 'user';
       setActiveView(newMode === 'user' ? '종합 현황 대시보드' : '프로젝트 관리 > 프로젝트/자산');
+      // If switching to admin mode while "All Projects" is selected,
+      // default to the first project because "All Projects" isn't a valid choice in admin mode.
+      if (newMode === 'admin' && selectedProjectId === ALL_PROJECTS_ID) {
+          if (projects.length > 0) {
+            setSelectedProjectId(projects[0].id);
+          }
+      }
       return newMode;
     });
   };
@@ -74,12 +84,39 @@ const App: React.FC = () => {
     setAssets(prev => prev.filter(a => a.asset_id !== assetId));
   }, []);
 
-  const { projectAssets, selectedProject } = useMemo(() => {
+  const {
+    projectAssets,
+    selectedProject,
+    projectReports,
+    projectAnomalies,
+  } = useMemo(() => {
+    const isAllProjects = selectedProjectId === ALL_PROJECTS_ID;
+
+    const currentProjectAssets = isAllProjects
+      ? assets
+      : assets.filter(asset => asset.project_id === selectedProjectId);
+    
+    const assetIdSet = new Set(currentProjectAssets.map(a => a.asset_id));
+
+    const currentProject = isAllProjects
+      ? {
+          id: ALL_PROJECTS_ID,
+          name: '전체 프로젝트',
+          description: '모든 프로젝트의 종합 현황을 표시합니다.',
+          team: [], documents: [], activity: []
+        } as ProjectDetail
+      : projects.find(p => p.id === selectedProjectId);
+    
+    const currentReports = reports.filter(report => assetIdSet.has(report.assetId));
+    const currentAnomalies = anomalies.filter(anomaly => assetIdSet.has(anomaly.assetId));
+
     return {
-      projectAssets: assets.filter(asset => asset.project_id === selectedProjectId),
-      selectedProject: projects.find(p => p.id === selectedProjectId)
+      projectAssets: currentProjectAssets,
+      selectedProject: currentProject,
+      projectReports: currentReports,
+      projectAnomalies: currentAnomalies,
     };
-  }, [assets, projects, selectedProjectId]);
+  }, [assets, projects, reports, anomalies, selectedProjectId]);
 
   const handleViewDetails = (assetId: string) => {
     const asset = assets.find(a => a.asset_id === assetId);
@@ -108,9 +145,9 @@ const App: React.FC = () => {
       case '종합 현황 대시보드':
         return <DashboardView assets={projectAssets} allReadings={readings} onViewDetails={handleViewDetails} onViewEventDetails={handleViewEventDetails} />;
       case '리포트':
-        return <ReportsView activeSubView={activeView} assets={projectAssets} />;
+        return <ReportsView activeSubView={activeView} assets={projectAssets} reports={projectReports} />;
       case 'SHM 모니터링':
-        return <ShmMonitorView activeSubView={activeView} />;
+        return <ShmMonitorView activeSubView={activeView} anomalies={projectAnomalies} />;
       case '기술자료 QA':
         return <KnowledgeQaView />;
       case '프로젝트 관리':
@@ -124,7 +161,7 @@ const App: React.FC = () => {
                     onDeleteAsset={handleDeleteAsset}
                  />;
         }
-        return <ProjectManagementView project={selectedProject} assets={projectAssets} allReadings={readings} allReports={reports} onViewDetails={handleViewDetails} />;
+        return <ProjectManagementView project={selectedProject} assets={projectAssets} allReadings={readings} allReports={projectReports} onViewDetails={handleViewDetails} />;
       case '시스템 설정':
           if (subView === '임계값 및 정책') {
               return <AdminThresholdsView />;
