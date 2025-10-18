@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 // FIX: Changed import paths to be relative.
 import { MOCK_THRESHOLDS_DEFAULT } from '../constants';
@@ -153,14 +152,14 @@ const AssetCard: React.FC<{ asset: Asset; readings: SensorReading[]; onViewDetai
 
             const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
             const status = reading.value >= thresholds.critical ? '위험' : reading.value >= thresholds.warning ? '경고' : '정상';
-            const color = getStatusColor(status);
+            const valueColorClass = status === '위험' ? 'text-red-700' : status === '경고' ? 'text-orange-800' : 'text-gray-900';
 
             return (
-              <div key={sensor.sensor_id} className="grid grid-cols-3 items-center text-sm p-2 rounded-lg bg-gray-50">
-                <span className="font-medium text-gray-700 capitalize">{sensor.type}</span>
+              <div key={sensor.sensor_id} className="grid grid-cols-3 items-center text-sm p-2 rounded-lg bg-gray-300">
+                <span className="font-medium text-gray-900 capitalize">{sensor.type}</span>
                 <div className="text-right">
-                  <span className={`font-mono font-semibold ${status !== '정상' ? color.text : 'text-gray-800'}`}>{reading.value.toFixed(2)}</span>
-                  <span className="text-gray-500 ml-1 text-xs">{sensor.unit}</span>
+                  <span className={`font-mono font-semibold ${valueColorClass}`}>{reading.value.toFixed(2)}</span>
+                  <span className="text-gray-800 ml-1 text-xs">{sensor.unit}</span>
                 </div>
                 <div className="flex justify-end">
                    {trendReadings[sensor.sensor_id] && <Sparkline data={trendReadings[sensor.sensor_id]} />}
@@ -205,9 +204,9 @@ const DashboardView: React.FC<DashboardViewProps> = ({ assets, allReadings, onVi
     }, [assets, allReadings]);
 
     const eventLog: EventLogEntry[] = [
-        { id: 'EVT-251016-001', time: '2025-10-16 09:10', assetId: 'BRG-SEOUL-001', asset: '한강교 A3 교각', event: '가속도(ACC-P3-01) 경고 임계값 초과', level: '경고', sensorId: 'ACC-P3-01', value: 0.143, threshold: 0.12, unit: 'g' },
-        { id: 'EVT-251016-002', time: '2025-10-16 09:05', assetId: 'BRG-SEOUL-001', asset: '한강교 A3 교각', event: '변위(DISP-P3-02) 경고 임계값 초과', level: '경고', sensorId: 'DISP-P3-02', value: 9.1, threshold: 8.0, unit: 'mm' },
-        { id: 'EVT-251016-003', time: '2025-10-16 08:30', assetId: 'BRG-SEOUL-001', asset: '한강교 A3 교각', event: '신규 점검 리포트 제출', level: '정보', sensorId: 'N/A', value: 0, threshold: 0, unit: ''},
+        { id: 'EVT-251016-001', time: '2025-10-16 09:10', assetId: 'BRUG-SEOUL-001', asset: '한강교 A3 교각', event: '가속도(ACC-P3-01) 경고 임계값 초과', level: '경고', sensorId: 'ACC-P3-01', value: 0.143, threshold: 0.12, unit: 'g' },
+        { id: 'EVT-251016-002', time: '2025-10-16 09:05', assetId: 'BRUG-SEOUL-001', asset: '한강교 A3 교각', event: '변위(DISP-P3-02) 경고 임계값 초과', level: '경고', sensorId: 'DISP-P3-02', value: 9.1, threshold: 8.0, unit: 'mm' },
+        { id: 'EVT-251016-003', time: '2025-10-16 08:30', assetId: 'BRUG-SEOUL-001', asset: '한강교 A3 교각', event: '신규 점검 리포트 제출', level: '정보', sensorId: 'N/A', value: 0, threshold: 0, unit: ''},
         { id: 'EVT-251015-004', time: '2025-10-15 14:00', assetId: 'BLD-GANGNAM-007', asset: '강남파이낸스센터', event: '변형률(STRN-C-05) 주의 임계값 근접', level: '주의', sensorId: 'STRN-C-05', value: 1180, threshold: 1200, unit: 'με' },
     ];
 
