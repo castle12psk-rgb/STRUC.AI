@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Asset } from '../types';
 
@@ -33,6 +32,7 @@ const PTZController: React.FC = () => (
 export const CctvDetailModal: React.FC<CctvDetailModalProps> = ({ asset, onClose }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [videoHasError, setVideoHasError] = useState(false);
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -40,14 +40,29 @@ export const CctvDetailModal: React.FC<CctvDetailModalProps> = ({ asset, onClose
     }, []);
     
     useEffect(() => {
-        if (videoRef.current) {
-            // Programmatically play the video to ensure autoplay works across browsers
-            videoRef.current.play().catch(error => {
-                console.error("Video autoplay was prevented:", error);
-                // Handle autoplay failure if necessary
-            });
+        const videoElement = videoRef.current;
+        if (videoElement && !videoHasError) {
+            const playPromise = videoElement.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Ignore the AbortError which is expected if the user closes the modal quickly
+                    if (error.name !== 'AbortError') {
+                        console.error("Video autoplay was prevented:", error);
+                    }
+                });
+            }
         }
-    }, []);
+        
+        // Cleanup function to run when the component unmounts
+        return () => {
+            if (videoElement) {
+                // Pause the video and release the video source
+                videoElement.pause();
+                videoElement.removeAttribute('src');
+                videoElement.load();
+            }
+        };
+    }, [videoHasError]);
 
     const eventLogs = [
         { time: '14:32:11', event: '움직임 감지 - Zone A', type: 'motion' },
@@ -79,15 +94,35 @@ export const CctvDetailModal: React.FC<CctvDetailModalProps> = ({ asset, onClose
                         {/* Video Feed */}
                         <div className="flex-grow flex flex-col gap-3">
                             <div className="flex-grow bg-black border border-slate-700 rounded-lg relative overflow-hidden">
-                                {/* Mock Video */}
-                                <video
-                                    ref={videoRef}
-                                    src="https://cdn.coverr.co/videos/coverr-a-bridge-in-the-city-570/1080p.mp4"
-                                    className="w-full h-full object-cover"
-                                    loop
-                                    muted
-                                    playsInline
-                                />
+                                {videoHasError ? (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800">
+                                        <img 
+                                            src={asset.snapshot_url || "https://images.pexels.com/photos/459762/pexels-photo-459762.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} 
+                                            alt={`${asset.name} CCTV 스냅샷`}
+                                            className="w-full h-full object-cover opacity-70"
+                                        />
+                                        <div className="absolute inset-0 bg-black/30"></div>
+                                        <div className="absolute text-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <p className="mt-2 text-lg font-semibold text-white drop-shadow-md">실시간 영상 로드 실패</p>
+                                            <p className="text-base text-slate-300 drop-shadow-md">마지막으로 수신된 스냅샷을 표시합니다.</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <video
+                                        ref={videoRef}
+                                        className="w-full h-full object-cover"
+                                        loop
+                                        muted
+                                        playsInline
+                                        onError={() => setVideoHasError(true)}
+                                    >
+                                      <source src="https://cdn.pixabay.com/video/2020/04/01/34720-410078991_large.mp4" type="video/mp4" />
+                                      브라우저가 비디오 태그를 지원하지 않습니다.
+                                    </video>
+                                )}
                                 
                                 {/* Video Overlay */}
                                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-3 flex flex-col justify-between">
@@ -97,9 +132,13 @@ export const CctvDetailModal: React.FC<CctvDetailModalProps> = ({ asset, onClose
                                             <p className="text-sm font-mono opacity-80 drop-shadow-lg">{asset.asset_id}</p>
                                         </div>
                                         <div className="text-right">
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-red-600/80 rounded-full text-sm font-bold">
-                                                <div className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span></div>
-                                                LIVE
+                                            <div className={`flex items-center gap-2 px-3 py-1 ${videoHasError ? 'bg-slate-500/80' : 'bg-red-600/80'} rounded-full text-sm font-bold`}>
+                                                {videoHasError ? (
+                                                    <div className="relative flex h-2 w-2"><span className="relative inline-flex rounded-full h-2 w-2 bg-slate-200"></span></div>
+                                                ) : (
+                                                    <div className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span></div>
+                                                )}
+                                                {videoHasError ? 'OFFLINE' : 'LIVE'}
                                             </div>
                                             <p className="font-mono mt-1 text-lg drop-shadow-lg">{currentTime.toLocaleTimeString('ko-KR')}</p>
                                         </div>

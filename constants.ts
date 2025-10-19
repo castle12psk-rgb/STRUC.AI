@@ -1,3 +1,4 @@
+
 import { ProjectDetail, Asset, SensorReading, ReviewReport, Thresholds, Anomaly, RagDoc, NotificationPolicies, ReportTemplate, AlertTemplate, User, ManagedRagDoc, DataSource } from './types';
 
 export const USER_MENU = {
@@ -176,6 +177,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '교량 교각',
     location: '서울시 용산구',
     last_inspection_date: '2025-10-15',
+    snapshot_url: 'https://images.pexels.com/photos/1643221/pexels-photo-1643221.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'RC (철근콘크리트)', year: 1988, post_tension: true, seismic_grade: 'I' },
     sensors: [
       { sensor_id: 'ACC-P3-01', type: 'accelerometer', unit: 'g' },
@@ -192,6 +194,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '초고층 빌딩',
     location: '서울시 강남구',
     last_inspection_date: '2025-08-22',
+    snapshot_url: 'https://images.pexels.com/photos/373934/pexels-photo-373934.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'SRC (철골철근콘크리트)', year: 2001, seismic_grade: 'II' },
     sensors: [
       { sensor_id: 'ACC-C-01', type: 'accelerometer', unit: 'g' },
@@ -206,6 +209,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '플랜트 구조물',
     location: '울산광역시 남구',
     last_inspection_date: '2025-09-05',
+    snapshot_url: 'https://images.pexels.com/photos/2883153/pexels-photo-2883153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'Steel (강재)', year: 1995 },
     sensors: [
         { sensor_id: 'TEMP-PIPE-01', type: 'temperature', unit: '°C' },
@@ -220,6 +224,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '철도교량',
     location: '서울시 동작구',
     last_inspection_date: '2025-09-20',
+    snapshot_url: 'https://images.pexels.com/photos/226466/pexels-photo-226466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'Steel Box Girder', year: 2004, seismic_grade: 'I' },
     sensors: [
         { sensor_id: 'ACC-KTX-01', type: 'accelerometer', unit: 'g' },
@@ -234,6 +239,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '초고층 빌딩',
     location: '부산시 해운대구',
     last_inspection_date: '2025-10-01',
+    snapshot_url: 'https://images.pexels.com/photos/10981358/pexels-photo-10981358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'RC (철근콘크리트)', year: 2019, seismic_grade: '특' },
     sensors: [
       { sensor_id: 'ACC-LCT-TOP', type: 'accelerometer', unit: 'g' },
@@ -248,6 +254,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '도로 터널',
     location: '강원도 평창군',
     last_inspection_date: '2025-07-11',
+    snapshot_url: 'https://images.pexels.com/photos/159624/tunnel-light-car-fast-159624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'NATM', year: 1975 },
     sensors: [
         { sensor_id: 'DISP-TUN-03', type: 'displacement', unit: 'mm' },
@@ -261,6 +268,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '콘크리트 중력식 댐',
     location: '충청북도 충주시',
     last_inspection_date: '2025-08-30',
+    snapshot_url: 'https://images.pexels.com/photos/33355/dam-barrage-댐-저수지.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'Concrete', year: 1985 },
     sensors: [
         { sensor_id: 'DISP-DAM-Crest', type: 'displacement', unit: 'mm' },
@@ -275,6 +283,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '대공간구조',
     location: '서울시 마포구',
     last_inspection_date: '2025-08-15',
+    snapshot_url: 'https://images.pexels.com/photos/1341279/pexels-photo-1341279.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'Steel Cable', year: 2001 },
     sensors: [
         { sensor_id: 'STRN-CABLE-12', type: 'strain', unit: 'με' },
@@ -289,6 +298,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '항만시설',
     location: '인천광역시 연수구',
     last_inspection_date: '2025-09-18',
+    snapshot_url: 'https://images.pexels.com/photos/4481258/pexels-photo-4481258.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'Steel (강재)', year: 2015 },
     sensors: [
         { sensor_id: 'STRN-CRN-BOOM', type: 'strain', unit: 'με' },
@@ -302,6 +312,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '지하철 역사',
     location: '서울시 강남구',
     last_inspection_date: '2025-10-10',
+    snapshot_url: 'https://images.pexels.com/photos/1033729/pexels-photo-1033729.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'RC (철근콘크리트)', year: 2009 },
     sensors: [
         { sensor_id: 'DISP-STN-WALL', type: 'displacement', unit: 'mm' },
@@ -316,6 +327,7 @@ export const MOCK_ASSETS: Asset[] = [
     type: '문화재',
     location: '경기도 수원시',
     last_inspection_date: '2025-09-25',
+    snapshot_url: 'https://images.pexels.com/photos/6710675/pexels-photo-6710675.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     design: { material: 'Brick and Stone', year: 1796 },
     sensors: [
         { sensor_id: 'TILT-HW-01', type: 'displacement', unit: 'deg' },

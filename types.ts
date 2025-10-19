@@ -1,3 +1,4 @@
+
 export type Mode = 'user' | 'admin';
 
 export type SensorType = 'accelerometer' | 'displacement' | 'strain' | 'temperature';
@@ -15,6 +16,7 @@ export interface Asset {
   type: string;
   location: string;
   last_inspection_date?: string;
+  snapshot_url?: string;
   design: {
     material: string;
     year: number;
