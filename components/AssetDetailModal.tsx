@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
+
+import React, { useMemo, useState } from 'react';
 // FIX: Changed import paths to be relative.
 import { Asset, SensorReading } from '../types';
 import { MOCK_THRESHOLDS_DEFAULT, MOCK_ASSET_EVENT_LOG } from '../constants';
+import { CctvDetailModal } from './CctvDetailModal';
 
 type HealthStatus = '정상' | '주의' | '경고' | '위험';
 
@@ -93,12 +95,16 @@ interface AssetDetailModalProps {
 }
 
 export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, allReadings, onClose, onToggleMinimize, isMinimized }) => {
-  if (!asset) return null;
-
-  const assetReadings = allReadings.filter(r => r.asset_id === asset.asset_id);
-  const assetEventLog = MOCK_ASSET_EVENT_LOG[asset.asset_id] || [];
+  const [isCctvModalOpen, setIsCctvModalOpen] = useState(false);
+  
+  const assetReadings = useMemo(() => {
+    if (!asset) return [];
+    return allReadings.filter(r => r.asset_id === asset.asset_id);
+  }, [asset, allReadings]);
   
   const { latestReadings, trendReadings } = useMemo(() => {
+    if (!asset) return { latestReadings: {}, trendReadings: {} };
+    
     const latest: { [key: string]: SensorReading } = {};
     const trends: { [key: string]: number[] } = {};
     
@@ -113,14 +119,14 @@ export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, allRe
       }
     });
     return { latestReadings: latest, trendReadings: trends };
-  }, [asset.sensors, assetReadings]);
+  }, [asset, assetReadings]);
 
   const { shi, criticalSensorInfo } = useMemo(() => {
+    if (!asset) return { shi: 100, criticalSensorInfo: null };
+
     let maxExceededRatio = 0;
     let critInfo: { type: string, value: number, threshold: number, status: HealthStatus } | null = null;
     
-    if (!latestReadings) return { shi: 100, criticalSensorInfo: null };
-
     Object.values(latestReadings).forEach((reading: SensorReading) => {
         const sensor = asset.sensors.find(s => s.sensor_id === reading.sensor_id);
         if (sensor) {
@@ -140,8 +146,12 @@ export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, allRe
         shi: (1 - Math.min(maxExceededRatio, 1) * 0.5) * 100, 
         criticalSensorInfo: critInfo 
     };
-  }, [latestReadings, asset.sensors]);
+  }, [asset, latestReadings]);
 
+  if (!asset) return null;
+
+  const assetEventLog = MOCK_ASSET_EVENT_LOG[asset.asset_id] || [];
+  
   if (isMinimized) {
     return (
       <div className="fixed bottom-4 right-4 z-50">
@@ -191,7 +201,23 @@ export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, allRe
 
           {/* Sensor Details */}
           <div className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-            <h3 className="font-bold text-slate-100 text-lg mb-4">센서 상세 현황</h3>
+            <div className="flex items-center gap-3 mb-4">
+                <h3 className="font-bold text-slate-100 text-lg">센서 상세 현황</h3>
+                <button 
+                  onClick={() => setIsCctvModalOpen(true)}
+                  className="flex items-center gap-2 text-sm text-slate-300 bg-slate-700 px-3 py-1 rounded-full hover:bg-slate-600 hover:text-white transition-all transform hover:scale-105" 
+                  aria-label="실시간 CCTV 영상 보기"
+                >
+                    <div className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </div>
+                    Live CCTV
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </button>
+            </div>
             <div className="space-y-3">
               {asset.sensors.map(sensor => {
                 const reading = latestReadings[sensor.sensor_id];
@@ -251,6 +277,7 @@ export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, allRe
 
         </div>
       </div>
+      {isCctvModalOpen && <CctvDetailModal asset={asset} onClose={() => setIsCctvModalOpen(false)} />}
     </>
   );
 };

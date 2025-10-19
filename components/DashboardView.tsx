@@ -201,26 +201,10 @@ interface DashboardViewProps {
   allReadings: SensorReading[];
   onViewDetails: (assetId: string) => void;
   onViewEventDetails: (event: EventLogEntry) => void;
+  assetsInAlert: number;
 }
 
-const DashboardView: React.FC<DashboardViewProps> = ({ assets, allReadings, onViewDetails, onViewEventDetails }) => {
-    const { assetsInAlert } = useMemo(() => {
-        let alertCount = 0;
-        assets.forEach(asset => {
-            const readings = allReadings.filter(r => r.asset_id === asset.asset_id);
-            const isAlert = asset.sensors.some(sensor => {
-                const latestReading = readings
-                    .filter(r => r.sensor_id === sensor.sensor_id)
-                    .sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
-                if (!latestReading) return false;
-                const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
-                return latestReading.value >= thresholds.warning;
-            });
-            if (isAlert) alertCount++;
-        });
-        return { assetsInAlert: alertCount };
-    }, [assets, allReadings]);
-
+const DashboardView: React.FC<DashboardViewProps> = ({ assets, allReadings, onViewDetails, onViewEventDetails, assetsInAlert }) => {
     const eventLog: EventLogEntry[] = [
         { id: 'EVT-251016-001', time: '2025-10-16 09:10', assetId: 'BRG-SEOUL-001', asset: '한강교 A3 교각', event: '가속도(ACC-P3-01) 경고 임계값 초과', level: '경고', sensorId: 'ACC-P3-01', value: 0.143, threshold: 0.12, unit: 'g' },
         { id: 'EVT-251016-002', time: '2025-10-16 09:05', assetId: 'BRG-SEOUL-001', asset: '한강교 A3 교각', event: '변위(DISP-P3-02) 경고 임계값 초과', level: '경고', sensorId: 'DISP-P3-02', value: 9.1, threshold: 8.0, unit: 'mm' },
@@ -255,21 +239,49 @@ const DashboardView: React.FC<DashboardViewProps> = ({ assets, allReadings, onVi
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="p-5">
+                <Card className="p-5 flex flex-col justify-between">
                     <h4 className="text-base font-semibold text-slate-400">총 관리 자산</h4>
-                    <p className="text-4xl font-bold text-slate-100 mt-2">{assets.length} <span className="text-xl font-medium text-slate-300">개</span></p>
+                    <div className="flex items-end justify-between mt-2">
+                        <p className="text-4xl font-bold text-slate-100">{assets.length} <span className="text-xl font-medium text-slate-300">개</span></p>
+                        <div className="p-2 bg-indigo-500/10 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                            </svg>
+                        </div>
+                    </div>
                 </Card>
-                <Card className="p-5">
+                <Card className="p-5 flex flex-col justify-between">
                     <h4 className="text-base font-semibold text-slate-400">주의/경고 자산</h4>
-                    <p className="text-4xl font-bold text-orange-400 mt-2">{assetsInAlert} <span className="text-xl font-medium text-orange-400/80">개</span></p>
+                    <div className="flex items-end justify-between mt-2">
+                        <p className="text-4xl font-bold text-orange-400">{assetsInAlert} <span className="text-xl font-medium text-orange-400/80">개</span></p>
+                        <div className="p-2 bg-orange-500/10 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
                 </Card>
-                 <Card className="p-5">
+                 <Card className="p-5 flex flex-col justify-between">
                     <h4 className="text-base font-semibold text-slate-400">진행중 리포트</h4>
-                    <p className="text-4xl font-bold text-slate-100 mt-2">1 <span className="text-xl font-medium text-slate-300">건</span></p>
+                    <div className="flex items-end justify-between mt-2">
+                        <p className="text-4xl font-bold text-slate-100">1 <span className="text-xl font-medium text-slate-300">건</span></p>
+                        <div className="p-2 bg-blue-500/10 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2-2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
                 </Card>
-                <Card className="p-5">
+                <Card className="p-5 flex flex-col justify-between">
                     <h4 className="text-base font-semibold text-slate-400">주요 알람 (24H)</h4>
-                    <p className="text-4xl font-bold text-red-400 mt-2">2 <span className="text-xl font-medium text-red-400/80">건</span></p>
+                    <div className="flex items-end justify-between mt-2">
+                        <p className="text-4xl font-bold text-red-400">2 <span className="text-xl font-medium text-red-400/80">건</span></p>
+                        <div className="p-2 bg-red-500/10 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v4a1 1 0 102 0V5zm-1 8a1 1 0 110-2 1 1 0 010 2z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
                 </Card>
             </div>
 

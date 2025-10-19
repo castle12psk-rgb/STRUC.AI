@@ -40,6 +40,8 @@ const App: React.FC = () => {
   const [isDetailModalMinimized, setIsDetailModalMinimized] = useState(false);
   const [selectedEventForDetail, setSelectedEventForDetail] = useState<EventLogEntry | null>(null);
 
+  const [assetsInAlert, setAssetsInAlert] = useState(0);
+
   const sensorTypeMap = useMemo(() => {
     const map = new Map<string, SensorType>();
     MOCK_ASSETS.forEach(asset => {
@@ -109,6 +111,58 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [sensorTypeMap]);
 
+  const {
+    projectAssets,
+    selectedProject,
+    projectReports,
+    projectAnomalies,
+  } = useMemo(() => {
+    const isAllProjects = selectedProjectId === ALL_PROJECTS_ID;
+
+    const currentProjectAssets = isAllProjects
+      ? assets
+      : assets.filter(asset => asset.project_id === selectedProjectId);
+    
+    const assetIdSet = new Set(currentProjectAssets.map(a => a.asset_id));
+
+    const currentProject = isAllProjects
+      ? {
+          id: ALL_PROJECTS_ID,
+          name: '전체 프로젝트',
+          description: '모든 프로젝트의 종합 현황을 표시합니다.',
+          team: [], documents: [], activity: []
+        } as ProjectDetail
+      : projects.find(p => p.id === selectedProjectId);
+    
+    const currentReports = reports.filter(report => assetIdSet.has(report.assetId));
+    const currentAnomalies = anomalies.filter(anomaly => assetIdSet.has(anomaly.assetId));
+
+    return {
+      projectAssets: currentProjectAssets,
+      selectedProject: currentProject,
+      projectReports: currentReports,
+      projectAnomalies: currentAnomalies,
+    };
+  }, [assets, projects, reports, anomalies, selectedProjectId]);
+
+  useEffect(() => {
+    let alertCount = 0;
+    projectAssets.forEach(asset => {
+        const isAlert = asset.sensors.some(sensor => {
+            const latestReading = readings
+                .filter(r => r.asset_id === asset.asset_id && r.sensor_id === sensor.sensor_id)
+                .sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+            
+            if (!latestReading) return false;
+
+            const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
+            return latestReading.value >= thresholds.warning;
+        });
+        if (isAlert) alertCount++;
+    });
+    setAssetsInAlert(alertCount);
+  }, [projectAssets, readings]);
+
   const toggleMode = () => {
     setMode(prevMode => {
       const newMode = prevMode === 'user' ? 'admin' : 'user';
@@ -170,40 +224,6 @@ const App: React.FC = () => {
   }, []);
 
 
-  const {
-    projectAssets,
-    selectedProject,
-    projectReports,
-    projectAnomalies,
-  } = useMemo(() => {
-    const isAllProjects = selectedProjectId === ALL_PROJECTS_ID;
-
-    const currentProjectAssets = isAllProjects
-      ? assets
-      : assets.filter(asset => asset.project_id === selectedProjectId);
-    
-    const assetIdSet = new Set(currentProjectAssets.map(a => a.asset_id));
-
-    const currentProject = isAllProjects
-      ? {
-          id: ALL_PROJECTS_ID,
-          name: '전체 프로젝트',
-          description: '모든 프로젝트의 종합 현황을 표시합니다.',
-          team: [], documents: [], activity: []
-        } as ProjectDetail
-      : projects.find(p => p.id === selectedProjectId);
-    
-    const currentReports = reports.filter(report => assetIdSet.has(report.assetId));
-    const currentAnomalies = anomalies.filter(anomaly => assetIdSet.has(anomaly.assetId));
-
-    return {
-      projectAssets: currentProjectAssets,
-      selectedProject: currentProject,
-      projectReports: currentReports,
-      projectAnomalies: currentAnomalies,
-    };
-  }, [assets, projects, reports, anomalies, selectedProjectId]);
-
   const handleViewDetails = (assetId: string) => {
     const asset = assets.find(a => a.asset_id === assetId);
     if (asset) {
@@ -229,7 +249,7 @@ const App: React.FC = () => {
 
     switch (mainView) {
       case '종합 현황 대시보드':
-        return <DashboardView assets={projectAssets} allReadings={readings} onViewDetails={handleViewDetails} onViewEventDetails={handleViewEventDetails} />;
+        return <DashboardView assets={projectAssets} allReadings={readings} onViewDetails={handleViewDetails} onViewEventDetails={handleViewEventDetails} assetsInAlert={assetsInAlert} />;
       case '리포트':
         return <ReportsView activeSubView={activeView} assets={projectAssets} reports={projectReports} />;
       case 'SHM 모니터링':
