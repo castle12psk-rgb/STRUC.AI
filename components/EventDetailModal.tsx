@@ -1,4 +1,5 @@
 
+
 import React, { useMemo } from 'react';
 // FIX: Changed import path to be relative.
 import { EventLogEntry } from '../types';
@@ -11,11 +12,11 @@ interface EventDetailModalProps {
 
 const getLevelAppearance = (level: EventLogEntry['level']) => {
   switch (level) {
-    case '위험': return { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-500/50' };
-    case '경고': return { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-500/50' };
-    case '주의': return { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-500/50' };
-    case '정보': return { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-500/50' };
-    default: return { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-500/50' };
+    case '위험': return { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30' };
+    case '경고': return { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/30' };
+    case '주의': return { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30' };
+    case '정보': return { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' };
+    default: return { bg: 'bg-slate-700', text: 'text-slate-300', border: 'border-slate-600' };
   }
 };
 
@@ -80,14 +81,14 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, onClo
     <>
       <div className="fixed inset-0 bg-black bg-opacity-60 z-40" onClick={onClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-50 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-fade-in">
+        <div className="bg-slate-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-fade-in border border-slate-700">
           {/* Header */}
-          <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 flex-shrink-0">
+          <div className="flex justify-between items-center p-4 bg-slate-800 border-b border-slate-700 flex-shrink-0">
             <div className="flex items-center gap-3">
               <span className={`text-sm font-bold px-3 py-1 rounded-full ${appearance.bg} ${appearance.text}`}>{event.level}</span>
-              <h2 className="text-lg font-bold text-gray-800 truncate">이벤트 상세: {event.event}</h2>
+              <h2 className="text-lg font-bold text-slate-200 truncate">이벤트 상세: {event.event}</h2>
             </div>
-            <button onClick={onClose} className="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors" aria-label="닫기">
+            <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-700 rounded-full transition-colors" aria-label="닫기">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -96,44 +97,44 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, onClo
           <div className="flex-grow p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto">
             {/* Left Column */}
             <div className="space-y-6">
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h3 className="font-bold text-gray-800 mb-2">AI 분석 요약</h3>
+              <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                <h3 className="font-bold text-slate-100 mb-2">AI 분석 요약</h3>
                 <div className={`p-3 rounded-md border ${appearance.bg} ${appearance.border}`}>
                     <h4 className={`font-semibold text-sm ${appearance.text}`}>{aiSummary.title}</h4>
                     <p className={`mt-1 text-sm ${appearance.text} text-opacity-90`}>{aiSummary.message}</p>
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h3 className="font-bold text-gray-800 mb-3">이벤트 상세 정보</h3>
+              <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                <h3 className="font-bold text-slate-100 mb-3">이벤트 상세 정보</h3>
                 <dl className="space-y-2 text-sm">
-                  <div className="flex"><dt className="w-24 text-gray-500">이벤트 ID</dt><dd className="font-mono text-gray-700">{event.id}</dd></div>
-                  <div className="flex"><dt className="w-24 text-gray-500">발생 시각</dt><dd className="font-medium text-gray-700">{event.time}</dd></div>
-                  <div className="flex"><dt className="w-24 text-gray-500">대상 자산</dt><dd className="font-medium text-gray-700">{event.asset} ({event.assetId})</dd></div>
+                  <div className="flex"><dt className="w-24 text-slate-400">이벤트 ID</dt><dd className="font-mono text-slate-300">{event.id}</dd></div>
+                  <div className="flex"><dt className="w-24 text-slate-400">발생 시각</dt><dd className="font-medium text-slate-300">{event.time}</dd></div>
+                  <div className="flex"><dt className="w-24 text-slate-400">대상 자산</dt><dd className="font-medium text-slate-300">{event.asset} ({event.assetId})</dd></div>
                   {isSensorEvent && (
                     <>
-                    <div className="flex"><dt className="w-24 text-gray-500">관련 센서</dt><dd className="font-mono text-gray-700">{event.sensorId}</dd></div>
-                    <div className="flex items-baseline"><dt className="w-24 text-gray-500">측정값</dt><dd className={`font-mono font-bold text-xl ${appearance.text}`}>{event.value.toLocaleString()}<span className="text-sm ml-1 font-sans text-gray-500">{event.unit}</span></dd></div>
-                    <div className="flex items-baseline"><dt className="w-24 text-gray-500">임계값</dt><dd className="font-mono font-semibold text-lg text-orange-600">{event.threshold.toLocaleString()}<span className="text-sm ml-1 font-sans text-gray-500">{event.unit}</span></dd></div>
+                    <div className="flex"><dt className="w-24 text-slate-400">관련 센서</dt><dd className="font-mono text-slate-300">{event.sensorId}</dd></div>
+                    <div className="flex items-baseline"><dt className="w-24 text-slate-400">측정값</dt><dd className={`font-mono font-bold text-xl ${appearance.text}`}>{event.value.toLocaleString()}<span className="text-sm ml-1 font-sans text-slate-400">{event.unit}</span></dd></div>
+                    <div className="flex items-baseline"><dt className="w-24 text-slate-400">임계값</dt><dd className="font-mono font-semibold text-lg text-orange-400">{event.threshold.toLocaleString()}<span className="text-sm ml-1 font-sans text-slate-400">{event.unit}</span></dd></div>
                     </>
                   )}
-                  <div className="flex"><dt className="w-24 text-gray-500">상태</dt><dd className="font-semibold text-blue-600">New</dd></div>
+                  <div className="flex"><dt className="w-24 text-slate-400">상태</dt><dd className="font-semibold text-blue-400">New</dd></div>
                 </dl>
               </div>
             </div>
             {/* Right Column */}
             <div className="space-y-6">
                 {isSensorEvent ? (
-                    <div className="bg-white p-4 rounded-lg border border-gray-200">
-                        <h3 className="font-bold text-gray-800 mb-2">이벤트 전후 센서 데이터 (추정)</h3>
+                    <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <h3 className="font-bold text-slate-100 mb-2">이벤트 전후 센서 데이터 (추정)</h3>
                         <LineChart data={chartData} threshold={event.threshold} eventIndex={10} unit={event.unit} width={380} height={200} />
                     </div>
                 ) : <div />}
-                <div className="bg-white p-4 rounded-lg border border-gray-200">
-                    <h3 className="font-bold text-gray-800 mb-3">대응 및 조치</h3>
+                <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    <h3 className="font-bold text-slate-100 mb-3">대응 및 조치</h3>
                     <div className="flex flex-col space-y-2">
-                        <button className="w-full text-left p-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-semibold">확인 (Acknowledge)</button>
-                        <button className="w-full text-left p-3 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition-colors text-sm font-semibold">작업 지시 생성</button>
-                        <button className="w-full text-left p-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-semibold">상세 분석 요청...</button>
+                        <button className="w-full text-left p-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 transition-colors text-sm font-semibold">확인 (Acknowledge)</button>
+                        <button className="w-full text-left p-3 bg-slate-700 text-white rounded-md hover:bg-slate-600 transition-colors text-sm font-semibold">작업 지시 생성</button>
+                        <button className="w-full text-left p-3 bg-slate-700 text-slate-300 rounded-md hover:bg-slate-600 transition-colors text-sm font-semibold">상세 분석 요청...</button>
                     </div>
                 </div>
             </div>

@@ -14,7 +14,7 @@ type PhotoWithPreview = {
 type CrackEntry = { id: number; location: string; width_mm: number; length_mm: number; type: string; };
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={`bg-white border border-slate-200 rounded-lg shadow-sm ${className}`}>
+  <div className={`bg-slate-800 border border-slate-700 rounded-lg shadow-lg ${className}`}>
     {children}
   </div>
 );
@@ -24,7 +24,7 @@ const renderMarkdown = (markdownText: string, highlightText?: string) => {
     
     return sections.map((section, index) => {
         if (section.startsWith('### ')) {
-            return <h3 key={index} className="text-xl font-bold text-slate-800 mt-5 mb-2 pb-2 border-b">{section.substring(4)}</h3>;
+            return <h3 key={index} className="text-xl font-bold text-slate-100 mt-5 mb-2 pb-2 border-b border-slate-700">{section.substring(4)}</h3>;
         }
         
         const paragraphs = section.split('\n').filter(p => p.trim() !== '');
@@ -32,9 +32,9 @@ const renderMarkdown = (markdownText: string, highlightText?: string) => {
         return paragraphs.map((line, pIndex) => {
              const isHighlighted = highlightText && line.includes(highlightText);
              if (line.startsWith('- ')) {
-                 return <li key={`${index}-${pIndex}`} className={`ml-5 text-base text-slate-700 list-disc ${isHighlighted ? 'animate-subtle-pulse rounded' : ''}`}>{line.substring(2)}</li>;
+                 return <li key={`${index}-${pIndex}`} className={`ml-5 text-base text-slate-300 list-disc ${isHighlighted ? 'animate-subtle-pulse rounded' : ''}`}>{line.substring(2)}</li>;
              }
-             return <p key={`${index}-${pIndex}`} className={`text-base text-slate-700 mb-2 ${isHighlighted ? 'animate-subtle-pulse rounded' : ''}`}>{line}</p>;
+             return <p key={`${index}-${pIndex}`} className={`text-base text-slate-300 mb-2 ${isHighlighted ? 'animate-subtle-pulse rounded' : ''}`}>{line}</p>;
         });
     });
 };
@@ -130,17 +130,17 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        e.currentTarget.classList.add('border-indigo-500', 'bg-indigo-50');
+        e.currentTarget.classList.add('border-indigo-500', 'bg-indigo-900/20');
     };
 
     const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        e.currentTarget.classList.remove('border-indigo-500', 'bg-indigo-50');
+        e.currentTarget.classList.remove('border-indigo-500', 'bg-indigo-900/20');
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        e.currentTarget.classList.remove('border-indigo-500', 'bg-indigo-50');
+        e.currentTarget.classList.remove('border-indigo-500', 'bg-indigo-900/20');
         handleFiles(e.dataTransfer.files);
     };
 
@@ -214,7 +214,7 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
     };
     
     if (assets.length === 0) {
-        return <Card className="p-6 text-center text-slate-500">현재 프로젝트에 등록된 자산이 없습니다.</Card>
+        return <Card className="p-6 text-center text-slate-400">현재 프로젝트에 등록된 자산이 없습니다.</Card>
     }
 
     return (
@@ -222,27 +222,27 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
             {/* INPUT COLUMN */}
             <div className="space-y-6">
                 <Card className="p-6">
-                     <h3 className="text-xl font-bold text-slate-800 mb-4">1단계: 자산 선택 및 데이터 확인</h3>
-                     <label htmlFor="asset-select" className="block text-base font-medium text-slate-700">리포트 대상 자산</label>
+                     <h3 className="text-xl font-bold text-slate-100 mb-4">1단계: 자산 선택 및 데이터 확인</h3>
+                     <label htmlFor="asset-select" className="block text-base font-medium text-slate-300">리포트 대상 자산</label>
                      <select 
                         id="asset-select" 
                         value={selectedAssetId || ''}
                         onChange={(e) => handleAssetChange(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-lg border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-base rounded-md"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-lg bg-slate-700 border-slate-600 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-base rounded-md"
                      >
                         {assets.map(asset => <option key={asset.asset_id} value={asset.asset_id}>{asset.name}</option>)}
                      </select>
                      
                      <div className="mt-4">
-                        <h4 className="text-base font-medium text-slate-700">AI 데이터 요약 (SHM 자동 연동)</h4>
-                        <p className="mt-1 text-base text-slate-600 bg-slate-100 p-3 rounded-md border border-slate-200">{shmDataSummary}</p>
+                        <h4 className="text-base font-medium text-slate-300">AI 데이터 요약 (SHM 자동 연동)</h4>
+                        <p className="mt-1 text-base text-slate-300 bg-slate-700/50 p-3 rounded-md border border-slate-600">{shmDataSummary}</p>
                      </div>
                 </Card>
                 
                 <Card className="p-6">
-                    <h3 className="text-xl font-bold text-slate-800 mb-4">2단계: 현장 점검 데이터 입력</h3>
+                    <h3 className="text-xl font-bold text-slate-100 mb-4">2단계: 현장 점검 데이터 입력</h3>
                     <div>
-                        <h4 className="font-semibold text-indigo-700 mb-2">사진 증거</h4>
+                        <h4 className="font-semibold text-indigo-400 mb-2">사진 증거</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {photos.map((photo) => (
                                 <div key={photo.id} className="relative group flex flex-col gap-2">
@@ -253,14 +253,14 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                     </button>
-                                    <div className="w-full h-32 bg-slate-200 rounded-md flex items-center justify-center border overflow-hidden">
+                                    <div className="w-full h-32 bg-slate-700 rounded-md flex items-center justify-center border border-slate-600 overflow-hidden">
                                         <img src={photo.previewUrl} alt={photo.file.name} className="w-full h-full object-cover" />
                                     </div>
                                     <textarea 
                                         value={photo.caption} 
                                         onChange={(e) => handlePhotoCaptionChange(photo.id, e.target.value)}
                                         rows={3} 
-                                        className="w-full text-base border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" 
+                                        className="w-full text-base bg-slate-700 border-slate-600 text-white rounded-md focus:ring-indigo-500 focus:border-indigo-500" 
                                         placeholder="사진에 대한 설명을 입력하세요..."
                                     />
                                 </div>
@@ -270,7 +270,7 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
                                 onClick={triggerFileInput}
-                                className="w-full h-full min-h-[14rem] bg-slate-50 rounded-md flex flex-col items-center justify-center border-2 border-dashed border-slate-300 text-slate-500 hover:border-indigo-500 hover:text-indigo-600 transition-all duration-200 cursor-pointer"
+                                className="w-full h-full min-h-[14rem] bg-slate-900/50 rounded-md flex flex-col items-center justify-center border-2 border-dashed border-slate-600 text-slate-400 hover:border-indigo-500 hover:text-indigo-400 transition-all duration-200 cursor-pointer"
                             >
                                 <input
                                     ref={fileInputRef}
@@ -282,32 +282,32 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
                                 />
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                                 <span className="mt-2 text-base font-medium">사진을 드래그하거나 클릭하여 추가</span>
-                                <span className="mt-1 text-sm text-slate-400">Drag & Drop or Click</span>
+                                <span className="mt-1 text-sm text-slate-500">Drag & Drop or Click</span>
                             </div>
                         </div>
                     </div>
                     
                     <div className="mt-6">
-                        <h4 className="font-semibold text-indigo-700 mb-2">균열 상세</h4>
+                        <h4 className="font-semibold text-indigo-400 mb-2">균열 상세</h4>
                          <div className="space-y-2">
                          {cracks.map(crack => (
                              <div key={crack.id} className="grid grid-cols-10 gap-2 text-base">
-                                <input type="text" defaultValue={crack.location} className="col-span-4 border-slate-300 rounded-md text-base" placeholder="위치 (예: P3 서측 하부)"/>
-                                <input type="text" defaultValue={crack.type} className="col-span-2 border-slate-300 rounded-md text-base" placeholder="유형 (예: 휨)"/>
-                                <input type="number" step="0.01" defaultValue={crack.width_mm} className="col-span-2 border-slate-300 rounded-md text-base text-right" placeholder="폭(mm)"/>
-                                <input type="number" defaultValue={crack.length_mm} className="col-span-2 border-slate-300 rounded-md text-base text-right" placeholder="길이(mm)"/>
+                                <input type="text" defaultValue={crack.location} className="col-span-4 bg-slate-700 border-slate-600 text-white rounded-md text-base" placeholder="위치 (예: P3 서측 하부)"/>
+                                <input type="text" defaultValue={crack.type} className="col-span-2 bg-slate-700 border-slate-600 text-white rounded-md text-base" placeholder="유형 (예: 휨)"/>
+                                <input type="number" step="0.01" defaultValue={crack.width_mm} className="col-span-2 bg-slate-700 border-slate-600 text-white rounded-md text-base text-right" placeholder="폭(mm)"/>
+                                <input type="number" defaultValue={crack.length_mm} className="col-span-2 bg-slate-700 border-slate-600 text-white rounded-md text-base text-right" placeholder="길이(mm)"/>
                              </div>
                          ))}
                          </div>
                     </div>
                     <div className="mt-6">
-                         <h4 className="font-semibold text-indigo-700 mb-2">엔지니어 종합 의견</h4>
-                         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full text-base border-slate-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+                         <h4 className="font-semibold text-indigo-400 mb-2">엔지니어 종합 의견</h4>
+                         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full text-base bg-slate-700 border-slate-600 text-white rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>
                 </Card>
 
                  <div className="flex justify-end">
-                    <button onClick={generateReport} disabled={isLoading || !selectedAsset} className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl text-lg">
+                    <button onClick={generateReport} disabled={isLoading || !selectedAsset} className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-500 disabled:bg-slate-500 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl text-lg">
                         {isLoading ? loadingStage : '3단계: AI 리포트 초안 생성'}
                     </button>
                 </div>
@@ -315,20 +315,20 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
             
             {/* OUTPUT COLUMN */}
             <div className="sticky top-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">생성된 리포트 (초안)</h3>
-                <div className="bg-slate-100 p-2 rounded-lg">
+                <h3 className="text-2xl font-bold text-slate-100 mb-6">생성된 리포트 (초안)</h3>
+                <div className="bg-slate-900 p-2 rounded-lg">
                     <Card className="p-8 min-h-[600px]">
                         {isLoading ? (
                             <div className="flex flex-col justify-center items-center h-full text-center">
-                                <svg className="animate-spin h-8 w-8 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-8 w-8 text-indigo-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                <p className="text-slate-600 font-semibold">{loadingStage}</p>
-                                <p className="text-base text-slate-500 mt-1">AI가 데이터를 분석하여 보고서를 작성하고 있습니다.</p>
+                                <p className="text-slate-300 font-semibold">{loadingStage}</p>
+                                <p className="text-base text-slate-400 mt-1">AI가 데이터를 분석하여 보고서를 작성하고 있습니다.</p>
                             </div>
                         ) : report ? (
-                            <div className="prose prose-sm max-w-none text-slate-800 leading-relaxed">
+                            <div className="prose prose-sm max-w-none text-slate-300 leading-relaxed">
                                 {renderMarkdown(report)}
                             </div>
                         ) : (
@@ -340,8 +340,8 @@ const NewReportView: React.FC<NewReportViewProps> = ({ assets }) => {
                 </div>
                 {report && !isLoading && (
                     <div className="mt-4 flex justify-end gap-3">
-                        <button disabled className="px-4 py-2 bg-slate-200 text-slate-500 rounded-md text-base font-semibold cursor-not-allowed">초안 저장</button>
-                        <button disabled className="px-4 py-2 bg-slate-200 text-slate-500 rounded-md text-base font-semibold cursor-not-allowed">담당자에게 보내기</button>
+                        <button disabled className="px-4 py-2 bg-slate-700 text-slate-400 rounded-md text-base font-semibold cursor-not-allowed">초안 저장</button>
+                        <button disabled className="px-4 py-2 bg-slate-700 text-slate-400 rounded-md text-base font-semibold cursor-not-allowed">담당자에게 보내기</button>
                         <button disabled className="px-4 py-2 bg-green-600 text-white rounded-md text-base font-semibold opacity-50 cursor-not-allowed">PDF로 내보내기</button>
                     </div>
                 )}
@@ -389,11 +389,11 @@ const ReportsInReviewView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
 
     const getStatusAppearance = (status: ReportStatus) => {
         switch (status) {
-            case '검토 중': return { bg: 'bg-yellow-100', text: 'text-yellow-800', dot: 'bg-yellow-500' };
-            case '수정 요청': return { bg: 'bg-orange-100', text: 'text-orange-800', dot: 'bg-orange-500' };
-            case '승인 대기': return { bg: 'bg-green-100', text: 'text-green-800', dot: 'bg-green-500' };
-            case '승인됨': return { bg: 'bg-blue-100', text: 'text-blue-800', dot: 'bg-blue-500' };
-            default: return { bg: 'bg-slate-100', text: 'text-slate-800', dot: 'bg-slate-500' };
+            case '검토 중': return { bg: 'bg-yellow-500/10', text: 'text-yellow-400', dot: 'bg-yellow-500' };
+            case '수정 요청': return { bg: 'bg-orange-500/10', text: 'text-orange-400', dot: 'bg-orange-500' };
+            case '승인 대기': return { bg: 'bg-green-500/10', text: 'text-green-400', dot: 'bg-green-500' };
+            case '승인됨': return { bg: 'bg-blue-500/10', text: 'text-blue-400', dot: 'bg-blue-500' };
+            default: return { bg: 'bg-slate-700', text: 'text-slate-300', dot: 'bg-slate-500' };
         }
     };
 
@@ -401,13 +401,13 @@ const ReportsInReviewView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
         const colors = {
             complete: { bg: 'bg-indigo-600', text: 'text-white' },
             current: { bg: 'bg-yellow-500', text: 'text-yellow-900' },
-            pending: { bg: 'bg-slate-200', text: 'text-slate-500' }
+            pending: { bg: 'bg-slate-600', text: 'text-slate-300' }
         };
         const statusText = { complete: '완료', current: '진행중', pending: '대기' };
         
         return (
             <div className="flex-1 text-center">
-                <div className={`text-xs font-bold uppercase ${status === 'pending' ? 'text-slate-400' : 'text-slate-600'}`}>{name}</div>
+                <div className={`text-xs font-bold uppercase ${status === 'pending' ? 'text-slate-500' : 'text-slate-400'}`}>{name}</div>
                 <div className={`mt-1 text-sm font-semibold p-1 rounded ${colors[status].bg} ${colors[status].text}`}>{user} ({statusText[status]})</div>
             </div>
         );
@@ -426,24 +426,24 @@ const ReportsInReviewView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
             {/* Left: Report List */}
             <div className="lg:col-span-1 flex flex-col h-full">
                 <Card className="p-4 flex-shrink-0">
-                    <input type="text" placeholder="리포트 검색..." className="w-full border-slate-300 rounded-md shadow-sm" />
+                    <input type="text" placeholder="리포트 검색..." className="w-full bg-slate-700 border-slate-600 text-white rounded-md shadow-sm" />
                 </Card>
                 <div className="flex-grow overflow-y-auto mt-4 space-y-3 pr-2">
                     {reports.filter(r => r.status !== '승인됨').map(report => (
-                        <button key={report.id} onClick={() => setSelectedReportId(report.id)} className={`w-full text-left p-4 rounded-lg border-l-4 transition-all duration-200 ${selectedReportId === report.id ? 'bg-indigo-50 border-indigo-500 shadow-md' : 'bg-white border-slate-200 hover:border-indigo-400 hover:bg-slate-50 shadow-sm'}`}>
+                        <button key={report.id} onClick={() => setSelectedReportId(report.id)} className={`w-full text-left p-4 rounded-lg border-l-4 transition-all duration-200 ${selectedReportId === report.id ? 'bg-slate-700/50 border-indigo-500 shadow-md' : 'bg-slate-800 border-slate-700 hover:border-indigo-500 hover:bg-slate-700/50 shadow-sm'}`}>
                             <div className="flex justify-between items-center">
-                                <h4 className="font-bold text-lg text-slate-800">{report.assetName}</h4>
+                                <h4 className="font-bold text-lg text-slate-100">{report.assetName}</h4>
                                 <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${getStatusAppearance(report.status).bg} ${getStatusAppearance(report.status).text}`}>{report.status}</span>
                             </div>
-                            <p className="text-sm text-slate-500 font-mono">{report.id}</p>
-                            <div className="mt-3 pt-3 border-t text-sm space-y-1">
+                            <p className="text-sm text-slate-400 font-mono">{report.id}</p>
+                            <div className="mt-3 pt-3 border-t border-slate-700 text-sm space-y-1">
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">평가 등급:</span>
-                                    <span className="font-bold text-slate-800">{report.safetyGrade}</span>
+                                    <span className="text-slate-400">평가 등급:</span>
+                                    <span className="font-bold text-slate-200">{report.safetyGrade}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">검토자:</span>
-                                    <span className="font-semibold text-slate-800">{report.reviewer}</span>
+                                    <span className="text-slate-400">검토자:</span>
+                                    <span className="font-semibold text-slate-200">{report.reviewer}</span>
                                 </div>
                             </div>
                         </button>
@@ -455,44 +455,44 @@ const ReportsInReviewView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
             <div className="lg:col-span-2 flex flex-col h-full">
                 {selectedReport ? (
                     <Card className="flex-grow flex flex-col">
-                        <div className="p-4 border-b flex-shrink-0">
-                            <h3 className="text-xl font-bold text-slate-800">{selectedReport.assetName} 정기점검 보고서</h3>
+                        <div className="p-4 border-b border-slate-700 flex-shrink-0">
+                            <h3 className="text-xl font-bold text-slate-100">{selectedReport.assetName} 정기점검 보고서</h3>
                             <div className="mt-4 flex items-center gap-2">
                                 <WorkflowStep name="작성" user={selectedReport.author} status="complete" />
-                                <div className="flex-1 h-0.5 bg-slate-200"></div>
+                                <div className="flex-1 h-0.5 bg-slate-700"></div>
                                 <WorkflowStep name="검토" user={selectedReport.reviewer || ''} status="current" />
-                                <div className="flex-1 h-0.5 bg-slate-200"></div>
+                                <div className="flex-1 h-0.5 bg-slate-700"></div>
                                 <WorkflowStep name="승인" user={selectedReport.approver || '미지정'} status="pending" />
                             </div>
                         </div>
 
                         <div className="flex-grow p-4 overflow-y-auto space-y-4">
                             {/* AI Summary */}
-                            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
-                                <h4 className="font-bold text-indigo-800 flex items-center gap-2">
+                            <div className="bg-indigo-900/30 border border-indigo-500/30 rounded-lg p-4">
+                                <h4 className="font-bold text-indigo-300 flex items-center gap-2">
                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                   AI 사전 검토 요약
                                 </h4>
                                 {isAiLoading ? (
                                     <div className="mt-2 space-y-2">
-                                        <div className="h-4 bg-indigo-200 rounded w-5/6 shimmer relative overflow-hidden"></div>
-                                        <div className="h-4 bg-indigo-200 rounded w-4/6 shimmer relative overflow-hidden"></div>
+                                        <div className="h-4 bg-indigo-500/20 rounded w-5/6 shimmer relative overflow-hidden"></div>
+                                        <div className="h-4 bg-indigo-500/20 rounded w-4/6 shimmer relative overflow-hidden"></div>
                                     </div>
                                 ) : (
-                                    <ul className="mt-2 space-y-1 text-base list-disc list-inside text-indigo-900">
-                                        <li onMouseEnter={() => setHighlight('0.35mm')} onMouseLeave={() => setHighlight(null)} className="cursor-pointer p-1 rounded hover:bg-indigo-100">{aiSummary[0]}</li>
-                                        <li onMouseEnter={() => setHighlight('9.1mm')} onMouseLeave={() => setHighlight(null)} className="cursor-pointer p-1 rounded hover:bg-indigo-100">{aiSummary[1]}</li>
+                                    <ul className="mt-2 space-y-1 text-base list-disc list-inside text-indigo-300">
+                                        <li onMouseEnter={() => setHighlight('0.35mm')} onMouseLeave={() => setHighlight(null)} className="cursor-pointer p-1 rounded hover:bg-indigo-500/20">{aiSummary[0]}</li>
+                                        <li onMouseEnter={() => setHighlight('9.1mm')} onMouseLeave={() => setHighlight(null)} className="cursor-pointer p-1 rounded hover:bg-indigo-500/20">{aiSummary[1]}</li>
                                         <li className="p-1">{aiSummary[2]}</li>
                                     </ul>
                                 )}
                             </div>
                             
                             {/* SHM Data Cross-check */}
-                             <div className="bg-slate-50 border rounded-lg p-4">
-                                <h4 className="font-bold text-slate-700">SHM 데이터 교차 검증</h4>
-                                <div className="flex items-center justify-between text-sm text-slate-600 mt-1">
+                             <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
+                                <h4 className="font-bold text-slate-300">SHM 데이터 교차 검증</h4>
+                                <div className="flex items-center justify-between text-sm text-slate-400 mt-1">
                                     <span>변위 센서(DISP-P3-02) 7일 동향</span>
-                                    <span className={`font-bold ${highlight === '9.1mm' ? 'text-indigo-600' : ''}`}>최대값: {shmChartData[shmChartData.length-1]?.value.toFixed(2)}mm</span>
+                                    <span className={`font-bold ${highlight === '9.1mm' ? 'text-indigo-400' : ''}`}>최대값: {shmChartData[shmChartData.length-1]?.value.toFixed(2)}mm</span>
                                 </div>
                                 <div className={highlight === '9.1mm' ? 'animate-subtle-pulse rounded' : ''}>
                                 <LineChart data={shmChartData} threshold={8.0} unit="mm" height={80} />
@@ -501,16 +501,16 @@ const ReportsInReviewView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
 
                             {/* Report Content */}
                             <div>
-                                <h4 className="font-bold text-slate-700 mb-2">제출된 리포트 원문</h4>
-                                <div className="p-4 border rounded-lg max-h-96 overflow-y-auto bg-white">
+                                <h4 className="font-bold text-slate-300 mb-2">제출된 리포트 원문</h4>
+                                <div className="p-4 border border-slate-700 rounded-lg max-h-96 overflow-y-auto bg-slate-900">
                                     {renderMarkdown(selectedReport.fullContent, highlight || undefined)}
                                 </div>
                             </div>
                         </div>
-                        <div className="p-4 bg-slate-50 border-t flex-shrink-0 flex justify-end items-center gap-3">
-                            <input type="text" placeholder="수정 요청 사항 입력..." className="flex-grow border-slate-300 rounded-md" />
-                            <button className="px-4 py-2 bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600">수정 요청</button>
-                            <button className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700">검토 완료 및 승인 요청</button>
+                        <div className="p-4 bg-slate-900/50 border-t border-slate-700 flex-shrink-0 flex justify-end items-center gap-3">
+                            <input type="text" placeholder="수정 요청 사항 입력..." className="flex-grow bg-slate-700 border-slate-600 text-white rounded-md" />
+                            <button className="px-4 py-2 bg-orange-600 text-white font-semibold rounded-md hover:bg-orange-500">수정 요청</button>
+                            <button className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-500">검토 완료 및 승인 요청</button>
                         </div>
                     </Card>
                 ) : (
@@ -548,9 +548,9 @@ const ApprovedReportsView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
     }, [selectedReport]);
     
     const getGradeAppearance = (grade: string) => {
-        if (grade.startsWith('A')) return { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-300' };
-        if (grade.startsWith('B')) return { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-300' };
-        return { bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300' };
+        if (grade.startsWith('A')) return { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/30' };
+        if (grade.startsWith('B')) return { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' };
+        return { bg: 'bg-slate-700', text: 'text-slate-300', border: 'border-slate-600' };
     };
     
     const AuditTrail: React.FC<{ trail: ReportAuditEntry[] }> = ({ trail }) => (
@@ -558,15 +558,15 @@ const ApprovedReportsView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
             {trail.map((entry, index) => (
                 <div key={index} className="flex gap-3">
                     <div className="flex flex-col items-center">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${entry.status === '승인됨' ? 'bg-green-500 text-white' : 'bg-slate-300 text-slate-700'}`}>
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${entry.status === '승인됨' ? 'bg-green-500 text-white' : 'bg-slate-600 text-slate-200'}`}>
                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                         </div>
-                        {index < trail.length - 1 && <div className="w-0.5 flex-grow bg-slate-300"></div>}
+                        {index < trail.length - 1 && <div className="w-0.5 flex-grow bg-slate-700"></div>}
                     </div>
                     <div>
-                        <p className="font-semibold text-slate-800">{entry.status}</p>
-                        <p className="text-sm text-slate-500">{entry.user} · {entry.timestamp}</p>
-                        {entry.notes && <p className="text-sm text-slate-600 mt-1 italic bg-slate-100 p-2 rounded-md">"{entry.notes}"</p>}
+                        <p className="font-semibold text-slate-200">{entry.status}</p>
+                        <p className="text-sm text-slate-400">{entry.user} · {entry.timestamp}</p>
+                        {entry.notes && <p className="text-sm text-slate-300 mt-1 italic bg-slate-700/50 p-2 rounded-md">"{entry.notes}"</p>}
                     </div>
                 </div>
             ))}
@@ -578,18 +578,18 @@ const ApprovedReportsView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
             {/* Left: Report List */}
             <div className="lg:col-span-1 flex flex-col h-full">
                 <Card className="p-4 flex-shrink-0">
-                    <input type="text" placeholder="승인된 리포트 검색..." className="w-full border-slate-300 rounded-md shadow-sm" />
+                    <input type="text" placeholder="승인된 리포트 검색..." className="w-full bg-slate-700 border-slate-600 text-white rounded-md shadow-sm" />
                 </Card>
                 <div className="flex-grow overflow-y-auto mt-4 space-y-3 pr-2">
                     {approvedReports.map(report => {
                          const gradeStyle = getGradeAppearance(report.safetyGrade);
                          return (
-                            <button key={report.id} onClick={() => setSelectedReportId(report.id)} className={`w-full text-left p-3 rounded-lg border-l-4 transition-all duration-200 ${selectedReportId === report.id ? 'bg-indigo-50 border-indigo-500 shadow-md' : 'bg-white border-slate-200 hover:border-indigo-400 hover:bg-slate-50 shadow-sm'}`}>
+                            <button key={report.id} onClick={() => setSelectedReportId(report.id)} className={`w-full text-left p-3 rounded-lg border-l-4 transition-all duration-200 ${selectedReportId === report.id ? 'bg-slate-700/50 border-indigo-500 shadow-md' : 'bg-slate-800 border-slate-700 hover:border-indigo-500 hover:bg-slate-700/50 shadow-sm'}`}>
                                 <div className="flex justify-between items-center">
-                                    <h4 className="font-bold text-base text-slate-800">{report.assetName}</h4>
+                                    <h4 className="font-bold text-base text-slate-100">{report.assetName}</h4>
                                     <span className={`px-2 py-0.5 text-xs font-bold rounded ${gradeStyle.bg} ${gradeStyle.text}`}>{report.safetyGrade}</span>
                                 </div>
-                                <p className="text-sm text-slate-500 font-mono mt-1">{report.id}</p>
+                                <p className="text-sm text-slate-400 font-mono mt-1">{report.id}</p>
                             </button>
                          );
                     })}
@@ -602,48 +602,48 @@ const ApprovedReportsView: React.FC<{ reports: ReviewReport[] }> = ({ reports: i
                       <Card className="p-4 flex-shrink-0">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="text-2xl font-bold text-slate-800">{selectedReport.assetName}</h3>
-                            <p className="text-base text-slate-500 font-mono">{selectedReport.id} (v{selectedReport.version})</p>
+                            <h3 className="text-2xl font-bold text-slate-100">{selectedReport.assetName}</h3>
+                            <p className="text-base text-slate-400 font-mono">{selectedReport.id} (v{selectedReport.version})</p>
                           </div>
                           <div className={`p-3 rounded-lg text-center border-2 ${getGradeAppearance(selectedReport.safetyGrade).border} ${getGradeAppearance(selectedReport.safetyGrade).bg}`}>
-                             <p className="text-sm font-bold uppercase text-slate-500">FINAL GRADE</p>
+                             <p className="text-sm font-bold uppercase text-slate-400">FINAL GRADE</p>
                              <p className={`text-2xl font-extrabold ${getGradeAppearance(selectedReport.safetyGrade).text}`}>{selectedReport.safetyGrade.split(' ')[0]}</p>
                           </div>
                         </div>
-                        <div className="mt-3 pt-3 border-t flex justify-between items-center text-sm">
+                        <div className="mt-3 pt-3 border-t border-slate-700 flex justify-between items-center text-sm">
                             <div>
-                                <span className="text-slate-500">승인자: </span><span className="font-semibold text-slate-800">{selectedReport.approver}</span>
+                                <span className="text-slate-400">승인자: </span><span className="font-semibold text-slate-200">{selectedReport.approver}</span>
                             </div>
                             <div>
-                                <span className="text-slate-500">승인일: </span><span className="font-semibold text-slate-800">{selectedReport.approvalDate}</span>
+                                <span className="text-slate-400">승인일: </span><span className="font-semibold text-slate-200">{selectedReport.approvalDate}</span>
                             </div>
                             <div className="flex gap-2">
-                                <button className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-sm hover:bg-indigo-700 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>PDF 내보내기</button>
-                                <button className="px-3 py-2 bg-white text-slate-600 font-semibold rounded-md border hover:bg-slate-100 text-sm">공유</button>
+                                <button className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-sm hover:bg-indigo-500 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>PDF 내보내기</button>
+                                <button className="px-3 py-2 bg-slate-700 text-slate-300 font-semibold rounded-md border border-slate-600 hover:bg-slate-600 text-sm">공유</button>
                             </div>
                         </div>
                       </Card>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow min-h-0">
                           <Card className="md:col-span-2 p-4 flex flex-col">
-                            <h4 className="font-bold text-slate-700 mb-2 flex-shrink-0">리포트 원문</h4>
-                            <div className="p-2 border rounded-lg overflow-y-auto bg-slate-50/50 flex-grow">
+                            <h4 className="font-bold text-slate-300 mb-2 flex-shrink-0">리포트 원문</h4>
+                            <div className="p-2 border border-slate-700 rounded-lg overflow-y-auto bg-slate-900/50 flex-grow">
                                 {renderMarkdown(selectedReport.fullContent, highlightedEvidence || undefined)}
                             </div>
                           </Card>
                           <div className="space-y-4 flex flex-col">
                               <Card className="p-4">
-                                <h4 className="font-bold text-slate-700 mb-2">핵심 근거 데이터</h4>
+                                <h4 className="font-bold text-slate-300 mb-2">핵심 근거 데이터</h4>
                                 <div className="space-y-2">
                                   {keyEvidence.map(ev => (
-                                    <div key={ev.id} onMouseEnter={() => setHighlightedEvidence(ev.highlight)} onMouseLeave={() => setHighlightedEvidence(null)} className="p-2 bg-slate-100 rounded-md cursor-pointer hover:bg-indigo-100 transition-colors">
-                                      <p className="text-sm font-semibold text-slate-800">{ev.text}</p>
+                                    <div key={ev.id} onMouseEnter={() => setHighlightedEvidence(ev.highlight)} onMouseLeave={() => setHighlightedEvidence(null)} className="p-2 bg-slate-700/50 rounded-md cursor-pointer hover:bg-indigo-900/30 transition-colors">
+                                      <p className="text-sm font-semibold text-slate-200">{ev.text}</p>
                                     </div>
                                   ))}
                                 </div>
                               </Card>
                                <Card className="p-4 flex-grow flex flex-col">
-                                <h4 className="font-bold text-slate-700 mb-2 flex-shrink-0">결재 타임라인</h4>
+                                <h4 className="font-bold text-slate-300 mb-2 flex-shrink-0">결재 타임라인</h4>
                                 <div className="overflow-y-auto flex-grow pr-2">
                                 {selectedReport.auditTrail && <AuditTrail trail={selectedReport.auditTrail} />}
                                 </div>
@@ -686,7 +686,7 @@ const ReportsView: React.FC<ReportsViewProps> = ({ activeSubView, assets, report
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6 text-slate-900">{activeSubView.replace(' > ', ' - ')}</h2>
+      <h2 className="text-3xl font-bold mb-6 text-slate-100">{activeSubView.replace(' > ', ' - ')}</h2>
       {renderContent()}
     </div>
   );

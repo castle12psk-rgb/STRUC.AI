@@ -23,7 +23,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   unit,
 }) => {
   if (data.length < 2) {
-    return <div className="flex items-center justify-center" style={{ width, height }}><p className="text-sm text-gray-500">데이터 부족</p></div>;
+    return <div className="flex items-center justify-center" style={{ width, height }}><p className="text-sm text-slate-500">데이터 부족</p></div>;
   }
 
   const padding = { top: 20, right: 40, bottom: 30, left: 45 };
@@ -49,35 +49,35 @@ export const LineChart: React.FC<LineChartProps> = ({
   const yAxisTicks = Array.from({length: 4}, (_, i) => yMin + (yRange / 3) * i);
 
   return (
-    <svg width={width} height={height} className="text-gray-600">
+    <svg width={width} height={height}>
       {/* Axes */}
-      <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="currentColor" className="text-gray-300" strokeWidth="1" />
-      <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="currentColor" className="text-gray-300" strokeWidth="1" />
+      <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="currentColor" className="text-slate-700" strokeWidth="1" />
+      <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="currentColor" className="text-slate-700" strokeWidth="1" />
 
       {/* Y-axis labels */}
       {yAxisTicks.map((tick, i) => (
         <g key={i}>
-          <text x={padding.left - 8} y={getY(tick)} dy="0.32em" textAnchor="end" className="text-xs fill-current text-gray-500">{tick.toFixed(2)}</text>
-          <line x1={padding.left} y1={getY(tick)} x2={width - padding.right} y2={getY(tick)} className="text-gray-200" strokeDasharray="2,2" />
+          <text x={padding.left - 8} y={getY(tick)} dy="0.32em" textAnchor="end" className="text-xs fill-current text-slate-400">{tick.toFixed(2)}</text>
+          <line x1={padding.left} y1={getY(tick)} x2={width - padding.right} y2={getY(tick)} className="text-slate-800" strokeDasharray="2,2" />
         </g>
       ))}
-      <text x={padding.left} y={padding.top - 8} className="text-xs fill-current text-gray-500">{unit}</text>
+      <text x={padding.left} y={padding.top - 8} className="text-xs fill-current text-slate-400">{unit}</text>
 
       {/* Threshold line */}
       {threshold !== undefined && getY(threshold) > padding.top && (
         <g>
           <line x1={padding.left} y1={getY(threshold)} x2={width - padding.right} y2={getY(threshold)} className="text-orange-500" strokeWidth="1.5" strokeDasharray="4,4" />
-          <text x={width - padding.right + 4} y={getY(threshold)} dy="0.32em" className="text-xs fill-current text-orange-600 font-semibold">임계값</text>
+          <text x={width - padding.right + 4} y={getY(threshold)} dy="0.32em" className="text-xs fill-current text-orange-400 font-semibold">임계값</text>
         </g>
       )}
 
       {/* Data line */}
-      <path d={path} fill="none" className="text-blue-500" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      <path d={path} fill="none" className="text-indigo-400" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       
       {/* Event point */}
       {eventIndex !== undefined && data[eventIndex] && (
         <g>
-          <circle cx={getX(eventIndex)} cy={getY(data[eventIndex].value)} r="6" className="fill-white stroke-2 stroke-red-500" />
+          <circle cx={getX(eventIndex)} cy={getY(data[eventIndex].value)} r="6" className="fill-slate-800 stroke-2 stroke-red-500" />
           <circle cx={getX(eventIndex)} cy={getY(data[eventIndex].value)} r="3" className="fill-red-500" />
         </g>
       )}

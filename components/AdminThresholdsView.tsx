@@ -4,7 +4,7 @@ import { MOCK_THRESHOLDS_DEFAULT, MOCK_PROJECTS, MOCK_NOTIFICATION_POLICIES } fr
 import { Thresholds, ThresholdSetting, NotificationPolicies, RecipientRole, NotificationChannel, NotificationPolicySetting, SensorType } from '../types';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={`bg-white border border-slate-200 rounded-lg shadow-sm p-6 ${className}`}>
+  <div className={`bg-slate-800 border border-slate-700 rounded-lg shadow-lg p-6 ${className}`}>
     {children}
   </div>
 );
@@ -13,7 +13,7 @@ const ToggleSwitch: React.FC<{ checked: boolean; onChange: (checked: boolean) =>
   <button
     type="button"
     className={`${
-      checked ? 'bg-indigo-600' : 'bg-slate-200'
+      checked ? 'bg-indigo-600' : 'bg-slate-600'
     } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
     onClick={() => onChange(!checked)}
   >
@@ -119,13 +119,13 @@ const AdminThresholdsView: React.FC = () => {
     <div className="space-y-8">
       <div>
         <div className="flex items-center gap-2">
-            <h2 className="text-4xl font-bold text-slate-900">임계값 및 정책</h2>
+            <h2 className="text-4xl font-bold text-slate-100">임계값 및 정책</h2>
             <div className="relative group">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-400 hover:text-indigo-600 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-500 hover:text-indigo-400 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-96 p-3 bg-slate-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
-                    <h4 className="font-bold mb-1 border-b pb-1">임계값 및 정책 도움말</h4>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-96 p-3 bg-slate-800 text-slate-200 text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 border border-slate-700">
+                    <h4 className="font-bold mb-1 border-b border-slate-700 pb-1">임계값 및 정책 도움말</h4>
                     <p className="mt-2">
                         이 페이지는 자동화된 SHM(구조물 건전성 모니터링) 시스템의 핵심 규칙을 정의합니다.
                     </p>
@@ -138,16 +138,16 @@ const AdminThresholdsView: React.FC = () => {
                 </div>
             </div>
         </div>
-        <p className="mt-1 text-lg text-slate-600">전사 표준 정책과 프로젝트별 특별 정책을 설정하여 모니터링 및 알림 규칙을 관리합니다.</p>
+        <p className="mt-1 text-lg text-slate-400">전사 표준 정책과 프로젝트별 특별 정책을 설정하여 모니터링 및 알림 규칙을 관리합니다.</p>
       </div>
       
       {/* Global Thresholds */}
       <Card>
-        <h3 className="text-2xl font-bold text-slate-800 mb-1">전역 임계값 정책</h3>
-        <p className="text-base text-slate-500 mb-4">모든 프로젝트에 기본으로 적용되는 표준 임계값입니다.</p>
+        <h3 className="text-2xl font-bold text-slate-100 mb-1">전역 임계값 정책</h3>
+        <p className="text-base text-slate-400 mb-4">모든 프로젝트에 기본으로 적용되는 표준 임계값입니다.</p>
         <div className="overflow-x-auto">
           <table className="w-full text-base">
-            <thead className="text-sm text-slate-500 uppercase bg-slate-50">
+            <thead className="text-sm text-slate-400 uppercase bg-slate-900/50">
               <tr>
                 <th className="px-4 py-2">센서 유형</th>
                 <th className="px-4 py-2">데이터 필터</th>
@@ -157,21 +157,20 @@ const AdminThresholdsView: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {/* FIX: Use Object.keys with type casting to preserve type information during iteration. */}
               {(Object.keys(editedGlobalThresholds) as Array<keyof Thresholds>).map((type) => {
                 const values = editedGlobalThresholds[type];
                 return (
-                <tr key={type} className="border-b">
-                  <td className="px-4 py-2 font-medium capitalize">{type}</td>
+                <tr key={type} className="border-b border-slate-700">
+                  <td className="px-4 py-2 font-medium capitalize text-slate-200">{type}</td>
                   <td className="px-4 py-2">
-                    <select value={values.filter} onChange={(e) => handleGlobalChange(type, 'filter', e.target.value)} className="w-40 border-slate-300 rounded-md text-base p-1">
+                    <select value={values.filter} onChange={(e) => handleGlobalChange(type, 'filter', e.target.value)} className="w-40 bg-slate-700 border-slate-600 text-white rounded-md text-base p-1 focus:ring-indigo-500 focus:border-indigo-500">
                       <option value="raw">Raw Data</option>
                       <option value="moving_avg_5m">Moving Average (5min)</option>
                       <option value="kalman">Kalman Filter</option>
                     </select>
                   </td>
-                  <td className="px-4 py-2"><input type="number" step="0.01" value={values.warning} onChange={e => handleGlobalChange(type, 'warning', parseFloat(e.target.value))} className="w-24 text-right border-slate-300 rounded-md p-1" /></td>
-                  <td className="px-4 py-2"><input type="number" step="0.01" value={values.critical} onChange={e => handleGlobalChange(type, 'critical', parseFloat(e.target.value))} className="w-24 text-right border-slate-300 rounded-md p-1" /></td>
+                  <td className="px-4 py-2"><input type="number" step="0.01" value={values.warning} onChange={e => handleGlobalChange(type, 'warning', parseFloat(e.target.value))} className="w-24 text-right bg-slate-700 border-slate-600 text-white rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500" /></td>
+                  <td className="px-4 py-2"><input type="number" step="0.01" value={values.critical} onChange={e => handleGlobalChange(type, 'critical', parseFloat(e.target.value))} className="w-24 text-right bg-slate-700 border-slate-600 text-white rounded-md p-1 focus:ring-indigo-500 focus:border-indigo-500" /></td>
                   <td className="px-4 py-2 text-center"><ToggleSwitch checked={values.active} onChange={checked => handleGlobalChange(type, 'active', checked)} /></td>
                 </tr>
               )})}
@@ -179,23 +178,23 @@ const AdminThresholdsView: React.FC = () => {
           </table>
         </div>
         <div className="mt-4 flex justify-end">
-            <button onClick={() => handleSave('global')} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-base">전역 정책 저장</button>
+            <button onClick={() => handleSave('global')} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-base hover:bg-indigo-500">전역 정책 저장</button>
         </div>
       </Card>
       
       {/* Project Overrides */}
       <Card>
-        <h3 className="text-2xl font-bold text-slate-800 mb-1">프로젝트별 재정의 (Override)</h3>
-        <p className="text-base text-slate-500 mb-4">특정 프로젝트의 고유 환경을 반영하여 표준 임계값을 재정의합니다.</p>
+        <h3 className="text-2xl font-bold text-slate-100 mb-1">프로젝트별 재정의 (Override)</h3>
+        <p className="text-base text-slate-400 mb-4">특정 프로젝트의 고유 환경을 반영하여 표준 임계값을 재정의합니다.</p>
         <div className="mb-4">
-          <label className="text-base font-medium text-slate-700">대상 프로젝트: </label>
-          <select value={selectedProjectId} onChange={e => setSelectedProjectId(e.target.value)} className="ml-2 border-slate-300 rounded-md p-2 text-base">
+          <label className="text-base font-medium text-slate-300">대상 프로젝트: </label>
+          <select value={selectedProjectId} onChange={e => setSelectedProjectId(e.target.value)} className="ml-2 bg-slate-700 border-slate-600 text-white rounded-md p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
             {MOCK_PROJECTS.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </div>
         <div className="overflow-x-auto">
            <table className="w-full text-base">
-            <thead className="text-sm text-slate-500 uppercase bg-slate-50">
+            <thead className="text-sm text-slate-400 uppercase bg-slate-900/50">
               <tr>
                 <th className="px-4 py-2">센서 유형</th>
                 <th className="px-4 py-2">정책</th>
@@ -206,29 +205,28 @@ const AdminThresholdsView: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {/* FIX: Use Object.keys with type casting to preserve type information during iteration. */}
               {(Object.keys(globalThresholds) as Array<keyof Thresholds>).map((type) => {
                 const globalValues = globalThresholds[type];
                 const overriddenValues = editedProjectOverrides[selectedProjectId]?.[type];
                 const isOverridden = !!overriddenValues;
                 const values = isOverridden ? overriddenValues : globalValues;
                 return (
-                 <tr key={type} className={`border-b ${isOverridden ? 'bg-indigo-50/70' : ''}`}>
-                    <td className="px-4 py-2 font-medium capitalize">{type}</td>
+                 <tr key={type} className={`border-b border-slate-700 ${isOverridden ? 'bg-indigo-900/20' : ''}`}>
+                    <td className="px-4 py-2 font-medium capitalize text-slate-200">{type}</td>
                     <td className="px-4 py-2">
-                        <span className={`px-2 py-0.5 text-sm font-semibold rounded-full ${isOverridden ? 'bg-indigo-200 text-indigo-800' : 'bg-slate-200 text-slate-700'}`}>
+                        <span className={`px-2 py-0.5 text-sm font-semibold rounded-full ${isOverridden ? 'bg-indigo-500/10 text-indigo-400' : 'bg-slate-700 text-slate-300'}`}>
                             {isOverridden ? 'Project Override' : 'Global Default'}
                         </span>
                     </td>
                     <td className="px-4 py-2">
-                      <select disabled={!isOverridden} value={values.filter} onChange={(e) => handleProjectOverrideChange(type, 'filter', e.target.value)} className="w-40 border-slate-300 rounded-md text-base p-1 disabled:bg-slate-100 disabled:text-slate-500">
+                      <select disabled={!isOverridden} value={values.filter} onChange={(e) => handleProjectOverrideChange(type, 'filter', e.target.value)} className="w-40 bg-slate-700 border-slate-600 text-white rounded-md text-base p-1 disabled:bg-slate-700/50 disabled:text-slate-400 disabled:border-slate-600 focus:ring-indigo-500 focus:border-indigo-500">
                          <option value="raw">Raw Data</option>
                          <option value="moving_avg_5m">Moving Average (5min)</option>
                          <option value="kalman">Kalman Filter</option>
                       </select>
                     </td>
-                    <td className="px-4 py-2"><input type="number" step="0.01" disabled={!isOverridden} value={values.warning} onChange={e => handleProjectOverrideChange(type, 'warning', parseFloat(e.target.value))} className="w-24 text-right border-slate-300 rounded-md p-1 disabled:bg-slate-100 disabled:text-slate-500"/></td>
-                    <td className="px-4 py-2"><input type="number" step="0.01" disabled={!isOverridden} value={values.critical} onChange={e => handleProjectOverrideChange(type, 'critical', parseFloat(e.target.value))} className="w-24 text-right border-slate-300 rounded-md p-1 disabled:bg-slate-100 disabled:text-slate-500"/></td>
+                    <td className="px-4 py-2"><input type="number" step="0.01" disabled={!isOverridden} value={values.warning} onChange={e => handleProjectOverrideChange(type, 'warning', parseFloat(e.target.value))} className="w-24 text-right bg-slate-700 border-slate-600 text-white rounded-md p-1 disabled:bg-slate-700/50 disabled:text-slate-400 disabled:border-slate-600 focus:ring-indigo-500 focus:border-indigo-500"/></td>
+                    <td className="px-4 py-2"><input type="number" step="0.01" disabled={!isOverridden} value={values.critical} onChange={e => handleProjectOverrideChange(type, 'critical', parseFloat(e.target.value))} className="w-24 text-right bg-slate-700 border-slate-600 text-white rounded-md p-1 disabled:bg-slate-700/50 disabled:text-slate-400 disabled:border-slate-600 focus:ring-indigo-500 focus:border-indigo-500"/></td>
                     <td className="px-4 py-2 text-center"><ToggleSwitch checked={isOverridden} onChange={() => toggleProjectOverride(type)} /></td>
                  </tr>
                 )
@@ -237,24 +235,23 @@ const AdminThresholdsView: React.FC = () => {
            </table>
         </div>
         <div className="mt-4 flex justify-end">
-            <button onClick={() => handleSave('project')} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-base">프로젝트 정책 저장</button>
+            <button onClick={() => handleSave('project')} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-base hover:bg-indigo-500">프로젝트 정책 저장</button>
         </div>
       </Card>
       
       {/* Notification Policies */}
       <Card>
-        <h3 className="text-2xl font-bold text-slate-800 mb-1">알림 및 통보 정책</h3>
-        <p className="text-base text-slate-500 mb-4">이상 상황 발생 시 알림을 받을 대상과 채널을 설정합니다.</p>
+        <h3 className="text-2xl font-bold text-slate-100 mb-1">알림 및 통보 정책</h3>
+        <p className="text-base text-slate-400 mb-4">이상 상황 발생 시 알림을 받을 대상과 채널을 설정합니다.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* FIX: Use Object.keys with type casting to preserve type information during iteration. */}
             {(Object.keys(editedNotificationPolicies) as Array<keyof NotificationPolicies>).map((level) => {
                 const policy = editedNotificationPolicies[level];
                 return (
-                <div key={level} className={`p-4 rounded-lg ${level === 'critical' ? 'bg-red-50' : 'bg-orange-50'}`}>
-                    <h4 className={`text-xl font-bold ${level === 'critical' ? 'text-red-700' : 'text-orange-700'}`}>{level === 'critical' ? '위험 (Critical) 단계' : '경고 (Warning) 단계'}</h4>
+                <div key={level} className={`p-4 rounded-lg ${level === 'critical' ? 'bg-red-900/20' : 'bg-orange-900/20'}`}>
+                    <h4 className={`text-xl font-bold ${level === 'critical' ? 'text-red-400' : 'text-orange-400'}`}>{level === 'critical' ? '위험 (Critical) 단계' : '경고 (Warning) 단계'}</h4>
                     <div className="mt-4 space-y-4">
                         <div>
-                            <label className="font-semibold text-base text-slate-700">수신 그룹</label>
+                            <label className="font-semibold text-base text-slate-300">수신 그룹</label>
                             <div className="mt-2 grid grid-cols-2 gap-2">
                                 {recipientRoles.map(role => (
                                     <label key={role.id} className="flex items-center text-base">
@@ -264,14 +261,14 @@ const AdminThresholdsView: React.FC = () => {
                                               const newRecipients = e.target.checked ? [...policy.recipients, role.id] : policy.recipients.filter(r => r !== role.id);
                                               handleNotificationChange(level, 'recipients', newRecipients);
                                           }}
-                                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                                        <span className="ml-2 text-slate-600">{role.name}</span>
+                                          className="h-4 w-4 rounded border-slate-500 bg-slate-700 text-indigo-600 focus:ring-indigo-500" />
+                                        <span className="ml-2 text-slate-300">{role.name}</span>
                                     </label>
                                 ))}
                             </div>
                         </div>
                          <div>
-                            <label className="font-semibold text-base text-slate-700">알림 채널</label>
+                            <label className="font-semibold text-base text-slate-300">알림 채널</label>
                             <div className="mt-2 grid grid-cols-2 gap-2">
                                 {notificationChannels.map(ch => (
                                     <label key={ch.id} className="flex items-center text-base">
@@ -281,19 +278,19 @@ const AdminThresholdsView: React.FC = () => {
                                               const newChannels = e.target.checked ? [...policy.channels, ch.id] : policy.channels.filter(c => c !== ch.id);
                                               handleNotificationChange(level, 'channels', newChannels);
                                           }}
-                                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                                        <span className="ml-2 text-slate-600">{ch.name}</span>
+                                          className="h-4 w-4 rounded border-slate-500 bg-slate-700 text-indigo-600 focus:ring-indigo-500" />
+                                        <span className="ml-2 text-slate-300">{ch.name}</span>
                                     </label>
                                 ))}
                             </div>
                         </div>
                         <div>
-                            <label className="font-semibold text-base text-slate-700">에스컬레이션 정책</label>
+                            <label className="font-semibold text-base text-slate-300">에스컬레이션 정책</label>
                             <input type="text"
                                 value={policy.escalation}
                                 onChange={e => handleNotificationChange(level, 'escalation', e.target.value)}
                                 placeholder="예: 15분 내 미확인 시 상급자에게 통보"
-                                className="w-full mt-1 border-slate-300 rounded-md text-base p-2"
+                                className="w-full mt-1 bg-slate-700 border-slate-600 text-white rounded-md text-base p-2"
                             />
                         </div>
                     </div>
@@ -301,7 +298,7 @@ const AdminThresholdsView: React.FC = () => {
             )})}
         </div>
          <div className="mt-4 flex justify-end">
-            <button onClick={() => handleSave('notification')} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-base">알림 정책 저장</button>
+            <button onClick={() => handleSave('notification')} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md text-base hover:bg-indigo-500">알림 정책 저장</button>
         </div>
       </Card>
       

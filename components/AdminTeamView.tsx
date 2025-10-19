@@ -3,14 +3,14 @@ import { ProjectDetail, User } from '../types';
 import { MOCK_ROLE_PERMISSIONS } from '../constants';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={`bg-white border border-slate-200 rounded-lg shadow-sm ${className}`}>{children}</div>
+  <div className={`bg-slate-800 border border-slate-700 rounded-lg shadow-lg ${className}`}>{children}</div>
 );
 
 const ToggleSwitch: React.FC<{ checked: boolean; onChange: (checked: boolean) => void; }> = ({ checked, onChange }) => (
   <button
     type="button"
     className={`${
-      checked ? 'bg-indigo-600' : 'bg-slate-200'
+      checked ? 'bg-indigo-600' : 'bg-slate-600'
     } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
     onClick={() => onChange(!checked)}
   >
@@ -25,11 +25,11 @@ const ToggleSwitch: React.FC<{ checked: boolean; onChange: (checked: boolean) =>
 
 const getRoleClass = (role: User['role']) => {
     switch (role) {
-        case 'Admin': return 'bg-red-100 text-red-800';
-        case 'Project Manager': return 'bg-indigo-100 text-indigo-800';
-        case 'Engineer': return 'bg-green-100 text-green-800';
-        case 'Inspector': return 'bg-yellow-100 text-yellow-800';
-        default: return 'bg-slate-100 text-slate-800';
+        case 'Admin': return 'bg-red-500/10 text-red-400';
+        case 'Project Manager': return 'bg-indigo-500/10 text-indigo-400';
+        case 'Engineer': return 'bg-green-500/10 text-green-400';
+        case 'Inspector': return 'bg-yellow-500/10 text-yellow-400';
+        default: return 'bg-slate-700 text-slate-300';
     }
 };
 
@@ -48,12 +48,12 @@ const ActivityLog: React.FC<{ user: User }> = ({ user }) => {
     return (
         <div className="space-y-4">
             {user.activity.map(log => (
-                <div key={log.id} className={`flex gap-3 ${log.critical ? 'p-2 bg-red-50 rounded-md' : ''}`}>
-                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${log.critical ? 'bg-red-200 text-red-700' : 'bg-slate-200 text-slate-600'}`}>
+                <div key={log.id} className={`flex gap-3 ${log.critical ? 'p-2 bg-red-900/20 rounded-md' : ''}`}>
+                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${log.critical ? 'bg-red-500/20 text-red-400' : 'bg-slate-700 text-slate-300'}`}>
                         {getActivityIcon(log.action)}
                     </div>
                     <div>
-                        <p className="font-semibold text-slate-800">{log.action}: <span className="font-normal">{log.target}</span></p>
+                        <p className="font-semibold text-slate-200">{log.action}: <span className="font-normal">{log.target}</span></p>
                         <p className="text-sm text-slate-500">{log.timestamp}</p>
                     </div>
                 </div>
@@ -102,13 +102,13 @@ const AdminTeamView: React.FC<AdminTeamViewProps> = ({ projects, users, onSaveUs
     return (
          <div className="space-y-8">
             <div>
-                <h2 className="text-4xl font-bold text-slate-900">팀원 관리</h2>
-                <p className="mt-1 text-lg text-slate-600">선택된 프로젝트의 팀 구성, 접근 권한 및 활동을 관리합니다.</p>
+                <h2 className="text-4xl font-bold text-slate-100">팀원 관리</h2>
+                <p className="mt-1 text-lg text-slate-400">선택된 프로젝트의 팀 구성, 접근 권한 및 활동을 관리합니다.</p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-12rem)]">
                 {/* Left: Member List */}
                 <div className="lg:col-span-1 flex flex-col h-full">
-                    <h3 className="text-2xl font-bold text-slate-800 mb-4 flex-shrink-0">
+                    <h3 className="text-2xl font-bold text-slate-100 mb-4 flex-shrink-0">
                         {projects.find(p => p.id === selectedProjectId)?.name || '...'} 팀원
                     </h3>
                     <div className="flex-grow overflow-y-auto space-y-3 pr-2">
@@ -116,22 +116,22 @@ const AdminTeamView: React.FC<AdminTeamViewProps> = ({ projects, users, onSaveUs
                             const isSelected = selectedUserId === user.id;
                             const accessHealth = getAccessHealth(user);
                             return (
-                                <Card key={user.id} className={`p-3 cursor-pointer transition-all duration-200 ${isSelected ? 'border-indigo-500 ring-2 ring-indigo-200' : 'hover:border-slate-300 hover:shadow-md'}`} onClick={() => setSelectedUserId(user.id)}>
+                                <Card key={user.id} className={`p-3 cursor-pointer transition-all duration-200 ${isSelected ? 'border-indigo-500 ring-2 ring-indigo-500/50 bg-slate-700/50' : 'hover:border-slate-600 hover:bg-slate-700/30'}`} onClick={() => setSelectedUserId(user.id)}>
                                     <div className="flex items-center gap-3">
                                         <img src={`https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className="w-12 h-12 rounded-full"/>
                                         <div>
-                                            <p className="font-bold text-lg text-slate-900">{user.name}</p>
+                                            <p className="font-bold text-lg text-slate-100">{user.name}</p>
                                             <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getRoleClass(user.role)}`}>{user.role}</span>
                                         </div>
                                     </div>
-                                    <div className="mt-3 pt-3 border-t text-sm space-y-1">
+                                    <div className="mt-3 pt-3 border-t border-slate-700 text-sm space-y-1">
                                          <div className="flex justify-between">
-                                            <span className="text-slate-500">최근 활동 (7일):</span>
-                                            <span className="font-bold text-slate-700">{user.activity?.length || 0}건</span>
+                                            <span className="text-slate-400">최근 활동 (7일):</span>
+                                            <span className="font-bold text-slate-200">{user.activity?.length || 0}건</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-slate-500">접근 권한 상태:</span>
-                                            <span className={`font-semibold ${accessHealth.status === 'Warning' ? 'text-yellow-700' : 'text-slate-700'}`}>{accessHealth.text}</span>
+                                            <span className="text-slate-400">접근 권한 상태:</span>
+                                            <span className={`font-semibold ${accessHealth.status === 'Warning' ? 'text-yellow-400' : 'text-slate-300'}`}>{accessHealth.text}</span>
                                         </div>
                                     </div>
                                 </Card>
@@ -144,39 +144,39 @@ const AdminTeamView: React.FC<AdminTeamViewProps> = ({ projects, users, onSaveUs
                 <div className="lg:col-span-2 h-full">
                     {selectedUser ? (
                         <Card className="p-6 h-full flex flex-col animate-fade-in">
-                            <div className="flex items-center gap-4 pb-4 border-b flex-shrink-0">
+                            <div className="flex items-center gap-4 pb-4 border-b border-slate-700 flex-shrink-0">
                                 <img src={`https://i.pravatar.cc/150?u=${selectedUser.id}`} alt={selectedUser.name} className="w-16 h-16 rounded-full"/>
                                 <div>
-                                    <h3 className="text-3xl font-bold text-slate-800">{selectedUser.name}</h3>
-                                    <p className="text-lg text-slate-500">{selectedUser.email}</p>
+                                    <h3 className="text-3xl font-bold text-slate-100">{selectedUser.name}</h3>
+                                    <p className="text-lg text-slate-400">{selectedUser.email}</p>
                                 </div>
                             </div>
                             <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 overflow-y-auto pr-2">
                                 {/* Access & Permissions */}
                                 <div className="space-y-4">
                                     <div>
-                                        <h4 className="font-bold text-lg text-slate-700 mb-2">프로젝트 접근 권한</h4>
-                                        <div className="space-y-2 p-3 bg-slate-50 rounded-md border max-h-48 overflow-y-auto">
+                                        <h4 className="font-bold text-lg text-slate-200 mb-2">프로젝트 접근 권한</h4>
+                                        <div className="space-y-2 p-3 bg-slate-700/50 rounded-md border border-slate-600 max-h-48 overflow-y-auto">
                                             {projects.map(p => (
                                                 <div key={p.id} className="flex items-center justify-between">
-                                                    <span className="text-base text-slate-800">{p.name}</span>
+                                                    <span className="text-base text-slate-200">{p.name}</span>
                                                     <ToggleSwitch checked={selectedUser.projectAccess.includes(p.id)} onChange={checked => handleProjectAccessChange(selectedUser, p.id, checked)} />
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                      <div>
-                                        <h4 className="font-bold text-lg text-slate-700 mb-2">역할 기반 권한 ({selectedUser.role})</h4>
-                                        <div className="text-base text-slate-600 space-y-1">
+                                        <h4 className="font-bold text-lg text-slate-200 mb-2">역할 기반 권한 ({selectedUser.role})</h4>
+                                        <div className="text-base text-slate-300 space-y-1">
                                             {MOCK_ROLE_PERMISSIONS[selectedUser.role]['리포트'].map(p => (
-                                                <p key={p} className="flex items-center gap-2"><span className="text-green-500">✔</span>{p}</p>
+                                                <p key={p} className="flex items-center gap-2"><span className="text-green-400">✔</span>{p}</p>
                                             ))}
                                         </div>
                                     </div>
                                 </div>
                                 {/* Activity Log */}
                                 <div>
-                                    <h4 className="font-bold text-lg text-slate-700 mb-2">최근 활동 로그</h4>
+                                    <h4 className="font-bold text-lg text-slate-200 mb-2">최근 활동 로그</h4>
                                     <div className="max-h-96 overflow-y-auto pr-2">
                                         <ActivityLog user={selectedUser} />
                                     </div>

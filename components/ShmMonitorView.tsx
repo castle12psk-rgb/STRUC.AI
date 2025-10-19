@@ -11,7 +11,7 @@ interface ShmMonitorViewProps {
 }
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={`bg-white border border-slate-200 rounded-lg shadow-sm ${className}`}>
+  <div className={`bg-slate-800 border border-slate-700 rounded-lg shadow-lg ${className}`}>
     {children}
   </div>
 );
@@ -58,17 +58,17 @@ const AnomalyAlertsView: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies: anom
 
     const getLevelAppearance = (level: '경고' | '위험') => {
         return level === '위험' 
-            ? { text: 'text-red-800', bg: 'bg-red-100', border: 'border-red-500' }
-            : { text: 'text-orange-800', bg: 'bg-orange-100', border: 'border-orange-500' };
+            ? { text: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500' }
+            : { text: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500' };
     };
     
     const getStatusAppearance = (status: AnomalyStatus) => {
         switch(status) {
-            case 'New': return { text: 'text-blue-800', bg: 'bg-blue-100' };
-            case 'Acknowledged': return { text: 'text-purple-800', bg: 'bg-purple-100' };
-            case 'In Progress': return { text: 'text-yellow-800', bg: 'bg-yellow-100' };
-            case 'Resolved': return { text: 'text-green-800', bg: 'bg-green-100' };
-            default: return { text: 'text-slate-800', bg: 'bg-slate-100' };
+            case 'New': return { text: 'text-blue-400', bg: 'bg-blue-500/10' };
+            case 'Acknowledged': return { text: 'text-purple-400', bg: 'bg-purple-500/10' };
+            case 'In Progress': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10' };
+            case 'Resolved': return { text: 'text-green-400', bg: 'bg-green-500/10' };
+            default: return { text: 'text-slate-300', bg: 'bg-slate-700' };
         }
     };
 
@@ -94,19 +94,19 @@ const AnomalyAlertsView: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies: anom
             {/* Left Column: Alert List */}
             <div className="lg:col-span-1 flex flex-col h-full">
                 <Card className="p-4 flex-shrink-0">
-                    <h3 className="font-bold text-slate-800 mb-3">필터</h3>
+                    <h3 className="font-bold text-slate-100 mb-3">필터</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-base">
                         <div>
-                            <label className="text-sm text-slate-500">심각도</label>
-                            <select onChange={e => setLevelFilter(e.target.value as any)} value={levelFilter} className="w-full mt-1 border-slate-300 rounded-md shadow-sm p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
+                            <label className="text-sm text-slate-400">심각도</label>
+                            <select onChange={e => setLevelFilter(e.target.value as any)} value={levelFilter} className="w-full mt-1 bg-slate-700 border-slate-600 text-white rounded-md shadow-sm p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="ALL">전체</option>
                                 <option value="위험">위험</option>
                                 <option value="경고">경고</option>
                             </select>
                         </div>
                         <div>
-                            <label className="text-sm text-slate-500">상태</label>
-                            <select onChange={e => setStatusFilter(e.target.value as any)} value={statusFilter} className="w-full mt-1 border-slate-300 rounded-md shadow-sm p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
+                            <label className="text-sm text-slate-400">상태</label>
+                            <select onChange={e => setStatusFilter(e.target.value as any)} value={statusFilter} className="w-full mt-1 bg-slate-700 border-slate-600 text-white rounded-md shadow-sm p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="ALL">전체</option>
                                 <option value="New">New</option>
                                 <option value="Acknowledged">Acknowledged</option>
@@ -115,8 +115,8 @@ const AnomalyAlertsView: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies: anom
                             </select>
                         </div>
                         <div>
-                            <label className="text-sm text-slate-500">자산</label>
-                            <select onChange={e => setAssetFilter(e.target.value)} value={assetFilter} className="w-full mt-1 border-slate-300 rounded-md shadow-sm p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
+                            <label className="text-sm text-slate-400">자산</label>
+                            <select onChange={e => setAssetFilter(e.target.value)} value={assetFilter} className="w-full mt-1 bg-slate-700 border-slate-600 text-white rounded-md shadow-sm p-2 text-base focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="ALL">전체</option>
                                 {uniqueAssets.map(asset => <option key={asset.id} value={asset.id}>{asset.name}</option>)}
                             </select>
@@ -132,15 +132,15 @@ const AnomalyAlertsView: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies: anom
                             <button 
                                 key={anomaly.id} 
                                 onClick={() => setSelectedAnomalyId(anomaly.id)}
-                                className={`w-full text-left p-3 rounded-lg border-l-4 transition-all duration-200 ${isSelected ? `bg-indigo-50 shadow-md ${levelStyle.border}` : `bg-white hover:bg-slate-50 shadow-sm ${levelStyle.border.replace('-500', '-300')}`}`}
+                                className={`w-full text-left p-3 rounded-lg border-l-4 transition-all duration-200 ${isSelected ? `bg-slate-700/50 shadow-md ${levelStyle.border}` : `bg-slate-800 hover:bg-slate-700/50 shadow-sm ${levelStyle.border.replace('-500', '-700')}`}`}
                             >
                                 <div className="flex justify-between items-center">
                                     <span className={`px-2 py-0.5 text-sm font-semibold rounded-full ${levelStyle.bg} ${levelStyle.text}`}>{anomaly.level}</span>
                                     <span className={`px-2 py-0.5 text-sm font-medium rounded-full ${statusStyle.bg} ${statusStyle.text}`}>{anomaly.status}</span>
                                 </div>
-                                <h4 className="font-bold text-lg text-slate-800 mt-2">{anomaly.assetName}</h4>
-                                <p className="text-base text-slate-600 font-mono">{anomaly.sensorId} ({anomaly.sensorType})</p>
-                                <p className="text-sm text-slate-400 mt-1">{anomaly.timestamp}</p>
+                                <h4 className="font-bold text-lg text-slate-100 mt-2">{anomaly.assetName}</h4>
+                                <p className="text-base text-slate-300 font-mono">{anomaly.sensorId} ({anomaly.sensorType})</p>
+                                <p className="text-sm text-slate-500 mt-1">{anomaly.timestamp}</p>
                             </button>
                         )
                     })}
@@ -154,56 +154,56 @@ const AnomalyAlertsView: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies: anom
                         <div className="space-y-6">
                             <div>
                                 <h3 className={`text-2xl font-bold ${getLevelAppearance(selectedAnomaly.level).text}`}>{selectedAnomaly.level} 이벤트: {selectedAnomaly.assetName}</h3>
-                                <p className="text-base text-slate-500">{selectedAnomaly.timestamp}</p>
+                                <p className="text-base text-slate-400">{selectedAnomaly.timestamp}</p>
                             </div>
                             
-                            <div className="bg-slate-50 p-4 rounded-lg">
-                                <h4 className="font-semibold text-slate-700 mb-2">AI 분석 요약</h4>
-                                <p className="text-base text-slate-600">{selectedAnomaly.aiSummary}</p>
+                            <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <h4 className="font-semibold text-slate-300 mb-2">AI 분석 요약</h4>
+                                <p className="text-base text-slate-300">{selectedAnomaly.aiSummary}</p>
                                 <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-base">
                                   <div>
-                                    <strong className="text-slate-500">추정 원인:</strong> {selectedAnomaly.aiCause}
+                                    <strong className="text-slate-400">추정 원인:</strong> <span className="text-slate-300">{selectedAnomaly.aiCause}</span>
                                   </div>
                                   <div>
-                                    <strong className="text-slate-500">권고 조치:</strong> {selectedAnomaly.aiAction}
+                                    <strong className="text-slate-400">권고 조치:</strong> <span className="text-slate-300">{selectedAnomaly.aiAction}</span>
                                   </div>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                               <div className="bg-white p-4 rounded-lg border">
-                                    <h4 className="text-base font-semibold text-slate-500">측정 데이터</h4>
+                               <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                    <h4 className="text-base font-semibold text-slate-400">측정 데이터</h4>
                                     <div className="mt-1">
                                         <span className={`text-4xl font-bold font-mono ${getLevelAppearance(selectedAnomaly.level).text}`}>{selectedAnomaly.value.toFixed(2)}</span>
-                                        <span className="ml-2 text-lg text-slate-600">{selectedAnomaly.unit}</span>
+                                        <span className="ml-2 text-lg text-slate-400">{selectedAnomaly.unit}</span>
                                     </div>
-                                    <div className="text-base text-slate-500 mt-1">임계값: {selectedAnomaly.threshold.toFixed(2)} {selectedAnomaly.unit}</div>
+                                    <div className="text-base text-slate-400 mt-1">임계값: {selectedAnomaly.threshold.toFixed(2)} {selectedAnomaly.unit}</div>
                                </div>
-                               <div className="bg-white p-4 rounded-lg border">
-                                  <h4 className="text-base font-semibold text-slate-500 mb-1">이벤트 전후 데이터 추세</h4>
+                               <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                  <h4 className="text-base font-semibold text-slate-400 mb-1">이벤트 전후 데이터 추세</h4>
                                   <LineChart data={chartData} threshold={selectedAnomaly.threshold} eventIndex={10} unit={selectedAnomaly.unit} height={80} />
                                </div>
                             </div>
                             
                             <div>
-                                <h4 className="font-semibold text-slate-700 mb-3">대응 및 조치</h4>
+                                <h4 className="font-semibold text-slate-300 mb-3">대응 및 조치</h4>
                                 <div className="flex flex-wrap gap-3">
                                     <button 
                                         onClick={() => handleAcknowledge(selectedAnomaly.id)}
                                         disabled={selectedAnomaly.status !== 'New'}
-                                        className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed flex items-center gap-2 text-lg">
+                                        className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-500 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center gap-2 text-lg">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                                         확인 (Acknowledge)
                                     </button>
-                                    <button className="px-4 py-2 bg-slate-700 text-white font-semibold rounded-md hover:bg-slate-800 text-lg">작업 지시 생성</button>
-                                    <button className="px-4 py-2 bg-white text-slate-700 font-semibold rounded-md border hover:bg-slate-100 text-lg">상세 분석 요청</button>
+                                    <button className="px-4 py-2 bg-slate-700 text-white font-semibold rounded-md hover:bg-slate-600 text-lg">작업 지시 생성</button>
+                                    <button className="px-4 py-2 bg-slate-700 text-slate-300 font-semibold rounded-md border border-slate-600 hover:bg-slate-600 text-lg">상세 분석 요청</button>
                                 </div>
                             </div>
                         </div>
                     ) : (
                         <div className="flex items-center justify-center h-full text-center text-slate-500">
                             <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" /></svg>
                                 <h3 className="mt-2 font-medium text-lg">알림을 선택하세요</h3>
                                 <p className="text-base mt-1">좌측 목록에서 알림을 선택하면 상세 정보가 표시됩니다.</p>
                             </div>
@@ -237,7 +237,7 @@ const LiveStreamChart: React.FC<{ data: { value: number }[], thresholds: Thresho
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-20" preserveAspectRatio="none">
             <line x1={0} y1={getY(thresholds.critical)} x2={width} y2={getY(thresholds.critical)} className="stroke-red-500/50" strokeWidth="1" strokeDasharray="3,3" />
             <line x1={0} y1={getY(thresholds.warning)} x2={width} y2={getY(thresholds.warning)} className="stroke-orange-500/50" strokeWidth="1" strokeDasharray="3,3" />
-            <path d={path} fill="none" className="stroke-indigo-600" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <path d={path} fill="none" className="stroke-indigo-400" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
         </svg>
     );
 };
@@ -246,17 +246,17 @@ const SensorLiveCard: React.FC<{ sensor: Sensor, data: { value: number }[], thre
     const latestValue = data.length > 0 ? data[data.length - 1].value : 0;
     
     const { status, colorClass, dotClass } = useMemo(() => {
-        if (latestValue >= thresholds.critical) return { status: '경고', colorClass: 'text-red-600', dotClass: 'bg-red-500' };
-        if (latestValue >= thresholds.warning) return { status: '주의', colorClass: 'text-orange-500', dotClass: 'bg-orange-400' };
-        return { status: '정상', colorClass: 'text-indigo-600', dotClass: 'bg-indigo-500' };
+        if (latestValue >= thresholds.critical) return { status: '위험', colorClass: 'text-red-400', dotClass: 'bg-red-500' };
+        if (latestValue >= thresholds.warning) return { status: '경고', colorClass: 'text-orange-400', dotClass: 'bg-orange-400' };
+        return { status: '정상', colorClass: 'text-indigo-400', dotClass: 'bg-indigo-500' };
     }, [latestValue, thresholds]);
 
     return (
         <Card className="flex flex-col p-4">
             <div className="flex justify-between items-start">
                 <div>
-                    <h4 className="font-bold text-lg text-slate-800 capitalize">{sensor.type}</h4>
-                    <p className="text-sm text-slate-500 font-mono">{sensor.sensor_id}</p>
+                    <h4 className="font-bold text-lg text-slate-100 capitalize">{sensor.type}</h4>
+                    <p className="text-sm text-slate-400 font-mono">{sensor.sensor_id}</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className={`w-2.5 h-2.5 rounded-full ${dotClass}`}></div>
@@ -265,12 +265,12 @@ const SensorLiveCard: React.FC<{ sensor: Sensor, data: { value: number }[], thre
             </div>
             <div className="my-2 text-right">
                 <span className={`text-4xl font-bold font-mono ${colorClass}`}>{latestValue.toFixed(3)}</span>
-                <span className="ml-1.5 text-lg text-slate-500">{sensor.unit}</span>
+                <span className="ml-1.5 text-lg text-slate-400">{sensor.unit}</span>
             </div>
             <div className="flex-grow flex items-end">
                 {data.length > 1 && <LiveStreamChart data={data} thresholds={thresholds} />}
             </div>
-            <div className="text-sm text-slate-400 mt-2 flex justify-between">
+            <div className="text-sm text-slate-500 mt-2 flex justify-between">
                 <span>경고: {thresholds.warning}</span>
                 <span>위험: {thresholds.critical}</span>
             </div>
@@ -304,16 +304,16 @@ const SensorExplanation: React.FC = () => {
 
     return (
         <Card className="mt-6 p-6">
-            <h3 className="text-2xl font-bold text-slate-800 mb-4">센서 유형별 상세 설명</h3>
+            <h3 className="text-2xl font-bold text-slate-100 mb-4">센서 유형별 상세 설명</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {explanations.map(item => (
                     <div key={item.title} className="flex items-start gap-4">
-                        <div className="flex-shrink-0 bg-indigo-100 text-indigo-600 rounded-lg p-3 mt-1">
+                        <div className="flex-shrink-0 bg-indigo-900/40 text-indigo-400 rounded-lg p-3 mt-1">
                             {item.icon}
                         </div>
                         <div>
-                            <h4 className="font-bold text-lg text-slate-700">{item.title}</h4>
-                            <p className="text-base text-slate-600 mt-1 leading-relaxed">{item.description}</p>
+                            <h4 className="font-bold text-lg text-slate-200">{item.title}</h4>
+                            <p className="text-base text-slate-400 mt-1 leading-relaxed">{item.description}</p>
                         </div>
                     </div>
                 ))}
@@ -389,18 +389,18 @@ const LiveStreamView: React.FC = () => {
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div>
-                            <label htmlFor="asset-select-live" className="block text-sm font-medium text-slate-500">자산 선택</label>
+                            <label htmlFor="asset-select-live" className="block text-sm font-medium text-slate-400">자산 선택</label>
                             <select 
                                 id="asset-select-live"
                                 value={selectedAsset.asset_id}
                                 onChange={e => handleAssetChange(e.target.value)}
-                                className="mt-1 border-slate-300 rounded-md shadow-sm text-base p-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="mt-1 bg-slate-700 border-slate-600 text-white rounded-md shadow-sm text-base p-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 {MOCK_ASSETS.map(asset => <option key={asset.asset_id} value={asset.asset_id}>{asset.name}</option>)}
                             </select>
                         </div>
                         <div>
-                           <label className="block text-sm font-medium text-slate-500">센서 채널</label>
+                           <label className="block text-sm font-medium text-slate-400">센서 채널</label>
                            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
                             {selectedAsset.sensors.map(sensor => (
                                 <label key={sensor.sensor_id} className="flex items-center text-base">
@@ -408,9 +408,9 @@ const LiveStreamView: React.FC = () => {
                                         type="checkbox"
                                         checked={selectedSensorIds.includes(sensor.sensor_id)}
                                         onChange={() => handleSensorSelectionChange(sensor.sensor_id)}
-                                        className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        className="h-4 w-4 rounded border-slate-500 bg-slate-700 text-indigo-600 focus:ring-indigo-500"
                                     />
-                                    <span className="ml-2 text-slate-700 capitalize">{sensor.type}</span>
+                                    <span className="ml-2 text-slate-300 capitalize">{sensor.type}</span>
                                 </label>
                             ))}
                            </div>
@@ -419,7 +419,7 @@ const LiveStreamView: React.FC = () => {
 
                     <button 
                         onClick={() => setIsLive(!isLive)}
-                        className={`px-4 py-2 rounded-md font-semibold text-base flex items-center gap-2 transition-colors ${isLive ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' : 'bg-slate-200 text-slate-800 hover:bg-slate-300'}`}
+                        className={`px-4 py-2 rounded-md font-semibold text-base flex items-center gap-2 transition-colors ${isLive ? 'bg-orange-500/10 text-orange-400 hover:bg-orange-500/20' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
                     >
                          {isLive ? (
                             <>
@@ -471,7 +471,7 @@ const ShmMonitorView: React.FC<ShmMonitorViewProps> = ({ activeSubView, anomalie
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6 text-slate-900">{activeSubView.replace(' > ', ' - ')}</h2>
+      <h2 className="text-3xl font-bold mb-6 text-slate-100">{activeSubView.replace(' > ', ' - ')}</h2>
       {renderContent()}
     </div>
   );

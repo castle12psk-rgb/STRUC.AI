@@ -3,17 +3,17 @@ import { MOCK_DATA_SOURCES, MOCK_ETL_STATS, MOCK_INGESTION_HISTORY } from '../co
 import { DataSource } from '../types';
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={`bg-white border border-slate-200 rounded-lg shadow-sm ${className}`}>
+  <div className={`bg-slate-800 border border-slate-700 rounded-lg shadow-lg ${className}`}>
     {children}
   </div>
 );
 
 const StatCard: React.FC<{ title: string; value: string | number; subtext?: string; icon: React.ReactNode }> = ({ title, value, subtext, icon }) => (
-    <div className="bg-slate-50 p-4 rounded-lg flex items-start gap-4">
-        <div className="bg-indigo-100 text-indigo-600 p-3 rounded-full mt-1">{icon}</div>
+    <div className="bg-slate-700/50 p-4 rounded-lg flex items-start gap-4">
+        <div className="bg-indigo-900/30 text-indigo-400 p-3 rounded-full mt-1">{icon}</div>
         <div>
-            <p className="text-base text-slate-500">{title}</p>
-            <p className="text-3xl font-bold text-slate-800">{value}</p>
+            <p className="text-base text-slate-400">{title}</p>
+            <p className="text-3xl font-bold text-slate-100">{value}</p>
             {subtext && <p className="text-sm text-slate-400">{subtext}</p>}
         </div>
     </div>
@@ -25,11 +25,13 @@ const IngestionChart: React.FC<{ data: { hour: string; points: number }[] }> = (
         <div className="h-40 flex items-end justify-between gap-1 px-2">
             {data.map((d, i) => (
                 <div key={i} className="flex-1 flex flex-col justify-end items-center group">
+                    <div className="absolute -top-7 text-xs bg-slate-900 text-white px-2 py-1 rounded-md invisible group-hover:visible transition-opacity">
+                        {d.points.toLocaleString()}
+                    </div>
                     <div 
-                        className="w-full bg-indigo-300 hover:bg-indigo-500 rounded-t-sm"
+                        className="w-full bg-indigo-500/50 hover:bg-indigo-500 rounded-t-sm transition-colors"
                         style={{ height: `${(d.points / maxPoints) * 100}%` }}
                     />
-                    <div className="text-xs text-slate-400 mt-1 invisible group-hover:visible">{d.points.toLocaleString()}</div>
                     <div className={`text-sm mt-1 ${i % 3 === 0 ? 'text-slate-500' : 'text-transparent'}`}>{d.hour.split(':')[0]}</div>
                 </div>
             ))}
@@ -73,10 +75,10 @@ const AdminEtlView: React.FC = () => {
 
     const getStatusClass = (status: DataSource['status']) => {
         switch (status) {
-            case 'Online': return { dot: 'bg-green-500', text: 'text-green-700' };
-            case 'Offline': return { dot: 'bg-slate-400', text: 'text-slate-600' };
-            case 'Error': return { dot: 'bg-red-500', text: 'text-red-700' };
-            default: return { dot: 'bg-slate-400', text: 'text-slate-600' };
+            case 'Online': return { dot: 'bg-green-500', text: 'text-green-400' };
+            case 'Offline': return { dot: 'bg-slate-500', text: 'text-slate-400' };
+            case 'Error': return { dot: 'bg-red-500', text: 'text-red-400' };
+            default: return { dot: 'bg-slate-500', text: 'text-slate-400' };
         }
     };
     
@@ -84,13 +86,13 @@ const AdminEtlView: React.FC = () => {
          <div className="space-y-8">
             <div>
                 <div className="flex items-center gap-2">
-                    <h2 className="text-4xl font-bold text-slate-900">데이터 수집 / ETL 관리</h2>
+                    <h2 className="text-4xl font-bold text-slate-100">데이터 수집 / ETL 관리</h2>
                     <div className="relative group">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-400 hover:text-indigo-600 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-500 hover:text-indigo-400 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 p-3 bg-slate-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
-                            <h4 className="font-bold mb-1 border-b pb-1">데이터 수집 / ETL 관리 도움말</h4>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 p-3 bg-slate-800 text-slate-200 text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 border border-slate-700">
+                            <h4 className="font-bold mb-1 border-b border-slate-700 pb-1">데이터 수집 / ETL 관리 도움말</h4>
                             <p className="mt-2">
                                 이 페이지에서는 STRUC.AI 플랫폼으로 들어오는 모든 데이터의 흐름을 관리하고 모니터링합니다.
                             </p>
@@ -109,11 +111,11 @@ const AdminEtlView: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <p className="mt-1 text-lg text-slate-600">센서 및 외부 시스템으로부터의 데이터 수집 파이프라인 상태를 모니터링합니다.</p>
+                <p className="mt-1 text-lg text-slate-400">센서 및 외부 시스템으로부터의 데이터 수집 파이프라인 상태를 모니터링합니다.</p>
             </div>
             
              <Card className="p-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">파이프라인 현황</h3>
+                <h3 className="text-2xl font-bold text-slate-100 mb-4">파이프라인 현황</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatCard title="총 데이터 소스" value={MOCK_ETL_STATS.totalSources} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7l8-4 8 4" /></svg>} />
                     <StatCard title="활성 소스" value={`${MOCK_ETL_STATS.onlineSources} / ${MOCK_ETL_STATS.totalSources}`} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
@@ -125,33 +127,33 @@ const AdminEtlView: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-28rem)] min-h-[500px]">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     <Card className="p-0 overflow-hidden flex-1 flex flex-col">
-                        <div className="p-4 border-b flex justify-between items-center flex-shrink-0">
-                            <h3 className="text-xl font-bold text-slate-800">데이터 소스 목록</h3>
-                            <button className="px-3 py-1.5 bg-indigo-600 text-white font-semibold rounded-md text-sm hover:bg-indigo-700">+ 새 소스 연결</button>
+                        <div className="p-4 border-b border-slate-700 flex justify-between items-center flex-shrink-0">
+                            <h3 className="text-xl font-bold text-slate-100">데이터 소스 목록</h3>
+                            <button className="px-3 py-1.5 bg-indigo-600 text-white font-semibold rounded-md text-sm hover:bg-indigo-500">+ 새 소스 연결</button>
                         </div>
                         <div className="overflow-x-auto flex-grow">
-                            <table className="min-w-full divide-y divide-slate-200 text-base">
-                                <thead className="bg-slate-50">
+                            <table className="min-w-full divide-y divide-slate-700 text-base">
+                                <thead className="bg-slate-900/50">
                                     <tr>
-                                        <th className="px-4 py-2 text-left font-medium text-slate-500 uppercase">상태</th>
-                                        <th className="px-4 py-2 text-left font-medium text-slate-500 uppercase">소스/자산</th>
-                                        <th className="px-4 py-2 text-left font-medium text-slate-500 uppercase">24H 처리량</th>
-                                        <th className="px-4 py-2 text-right font-medium text-slate-500 uppercase">지연시간</th>
-                                        <th className="px-4 py-2 text-left font-medium text-slate-500 uppercase">마지막 수신</th>
-                                        <th className="px-4 py-2 text-left font-medium text-slate-500 uppercase">관리</th>
+                                        <th className="px-4 py-2 text-left font-medium text-slate-400 uppercase">상태</th>
+                                        <th className="px-4 py-2 text-left font-medium text-slate-400 uppercase">소스/자산</th>
+                                        <th className="px-4 py-2 text-left font-medium text-slate-400 uppercase">24H 처리량</th>
+                                        <th className="px-4 py-2 text-right font-medium text-slate-400 uppercase">지연시간</th>
+                                        <th className="px-4 py-2 text-left font-medium text-slate-400 uppercase">마지막 수신</th>
+                                        <th className="px-4 py-2 text-left font-medium text-slate-400 uppercase">관리</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-slate-200">
+                                <tbody className="bg-slate-800 divide-y divide-slate-700">
                                     {MOCK_DATA_SOURCES.map(source => {
                                         const statusStyle = getStatusClass(source.status);
                                         return (
-                                        <tr key={source.id} onClick={() => setSelectedSource(source)} className={`cursor-pointer hover:bg-indigo-50 ${selectedSource?.id === source.id ? 'bg-indigo-50' : ''}`}>
+                                        <tr key={source.id} onClick={() => setSelectedSource(source)} className={`cursor-pointer hover:bg-indigo-900/20 ${selectedSource?.id === source.id ? 'bg-indigo-900/20' : ''}`}>
                                             <td className="px-4 py-3"><div className="flex items-center"><div className={`w-2.5 h-2.5 rounded-full mr-2 ${statusStyle.dot}`}></div><span className={statusStyle.text}>{source.status}</span></div></td>
-                                            <td className="px-4 py-3"><div className="font-semibold text-slate-800">{source.sourceName}</div><div className="text-sm text-slate-500">{source.assetName}</div></td>
-                                            <td className="px-4 py-3 font-mono">{source.dataVolume24h}</td>
-                                            <td className="px-4 py-3 text-right font-mono">{source.avgLatencyMs}ms</td>
-                                            <td className="px-4 py-3 text-slate-500">{source.lastReceived}</td>
-                                            <td className="px-4 py-3"><div className="flex gap-2"><button className="text-indigo-600 hover:underline text-sm">재시도</button><button className="text-slate-500 hover:underline text-sm">일시정지</button></div></td>
+                                            <td className="px-4 py-3"><div className="font-semibold text-slate-200">{source.sourceName}</div><div className="text-sm text-slate-400">{source.assetName}</div></td>
+                                            <td className="px-4 py-3 font-mono text-slate-300">{source.dataVolume24h}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-slate-300">{source.avgLatencyMs}ms</td>
+                                            <td className="px-4 py-3 text-slate-400">{source.lastReceived}</td>
+                                            <td className="px-4 py-3"><div className="flex gap-2"><button className="text-indigo-400 hover:underline text-sm">재시도</button><button className="text-slate-400 hover:underline text-sm">일시정지</button></div></td>
                                         </tr>
                                     )})}
                                 </tbody>
@@ -159,15 +161,15 @@ const AdminEtlView: React.FC = () => {
                         </div>
                     </Card>
                     <Card className="p-4 flex-shrink-0">
-                         <h3 className="text-xl font-bold text-slate-800 mb-2">데이터 처리량 (24H)</h3>
+                         <h3 className="text-xl font-bold text-slate-100 mb-2">데이터 처리량 (24H)</h3>
                          <IngestionChart data={MOCK_INGESTION_HISTORY} />
                     </Card>
                 </div>
                 <Card className="p-4 flex flex-col">
-                    <h3 className="text-xl font-bold text-slate-800 mb-2">실시간 로그</h3>
-                    <p className="text-base text-slate-500 mb-3 font-mono">{selectedSource?.sourceName || 'No source selected'}</p>
+                    <h3 className="text-xl font-bold text-slate-100 mb-2">실시간 로그</h3>
+                    <p className="text-base text-slate-400 mb-3 font-mono">{selectedSource?.sourceName || 'No source selected'}</p>
                     <div className="flex-grow min-h-0">
-                        {selectedSource ? <LogViewer source={selectedSource} /> : <div className="flex items-center justify-center h-full text-slate-400">데이터 소스를 선택하세요.</div>}
+                        {selectedSource ? <LogViewer source={selectedSource} /> : <div className="flex items-center justify-center h-full text-slate-500">데이터 소스를 선택하세요.</div>}
                     </div>
                 </Card>
             </div>

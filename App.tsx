@@ -1,6 +1,6 @@
 
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
 import ReportsView from './components/ReportsView';
@@ -18,8 +18,8 @@ import PlaceholderView from './components/PlaceholderView';
 import { AssetDetailModal } from './components/AssetDetailModal';
 import { EventDetailModal } from './components/EventDetailModal';
 
-import { Mode, Asset, SensorReading, ProjectDetail, ReviewReport, EventLogEntry, Anomaly, User } from './types';
-import { MOCK_PROJECTS, MOCK_ASSETS, MOCK_SENSOR_READINGS, MOCK_REVIEW_REPORTS, MOCK_ANOMALIES, MOCK_USERS } from './constants';
+import { Mode, Asset, SensorReading, ProjectDetail, ReviewReport, EventLogEntry, Anomaly, User, SensorType } from './types';
+import { MOCK_PROJECTS, MOCK_ASSETS, MOCK_SENSOR_READINGS, MOCK_REVIEW_REPORTS, MOCK_ANOMALIES, MOCK_USERS, MOCK_THRESHOLDS_DEFAULT } from './constants';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('user');
@@ -39,6 +39,75 @@ const App: React.FC = () => {
   const [selectedAssetForDetail, setSelectedAssetForDetail] = useState<Asset | null>(null);
   const [isDetailModalMinimized, setIsDetailModalMinimized] = useState(false);
   const [selectedEventForDetail, setSelectedEventForDetail] = useState<EventLogEntry | null>(null);
+
+  const sensorTypeMap = useMemo(() => {
+    const map = new Map<string, SensorType>();
+    MOCK_ASSETS.forEach(asset => {
+        asset.sensors.forEach(sensor => {
+            map.set(sensor.sensor_id, sensor.type);
+        });
+    });
+    return map;
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setReadings(prevReadings => {
+            const latestReadingsMap = new Map<string, SensorReading>();
+            for (const reading of prevReadings) {
+                const existing = latestReadingsMap.get(reading.sensor_id);
+                if (!existing || new Date(reading.timestamp) > new Date(existing.timestamp)) {
+                    latestReadingsMap.set(reading.sensor_id, reading);
+                }
+            }
+
+            const now = new Date().toISOString();
+            const newReadingsBatch: SensorReading[] = [];
+
+            latestReadingsMap.forEach((latestReading, sensor_id) => {
+                const sensorType = sensorTypeMap.get(sensor_id);
+                if (sensorType) {
+                    const thresholds = MOCK_THRESHOLDS_DEFAULT[sensorType];
+                    const range = thresholds.warning * 0.05; 
+                    const fluctuation = (Math.random() - 0.5) * range;
+                    let newValue = latestReading.value + fluctuation;
+
+                    if (sensorType !== 'temperature') {
+                        newValue = Math.max(0, newValue);
+                    }
+
+                    if (latestReading.value < thresholds.warning && newValue > thresholds.warning * 0.95) {
+                        newValue = latestReading.value - Math.abs(fluctuation);
+                    }
+                    
+                    newReadingsBatch.push({
+                        ...latestReading,
+                        timestamp: now,
+                        value: newValue,
+                    });
+                }
+            });
+            
+            const nextReadings = [...prevReadings, ...newReadingsBatch];
+            
+            const sensorReadingsMap = new Map<string, SensorReading[]>();
+            nextReadings.forEach(r => {
+                const sensorReadings = sensorReadingsMap.get(r.sensor_id) || [];
+                sensorReadings.push(r);
+                sensorReadingsMap.set(r.sensor_id, sensorReadings);
+            });
+            
+            const finalReadings: SensorReading[] = [];
+            sensorReadingsMap.forEach(readings => {
+                finalReadings.push(...readings.slice(-50));
+            });
+
+            return finalReadings;
+        });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [sensorTypeMap]);
 
   const toggleMode = () => {
     setMode(prevMode => {
@@ -212,7 +281,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-100 font-sans">
+    <div className="flex h-screen bg-slate-900 font-sans">
       <Sidebar
         mode={mode}
         activeView={activeView}
