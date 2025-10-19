@@ -47,6 +47,13 @@ export interface EventLogEntry {
 
 export type ReportStatus = '검토 중' | '수정 요청' | '승인 대기' | '승인됨';
 
+export interface ReportAuditEntry {
+  status: '작성됨' | '제출됨' | '검토됨' | '수정됨' | '승인됨';
+  user: string;
+  timestamp: string;
+  notes?: string;
+}
+
 export interface ReviewReport {
   id: string;
   assetName: string;
@@ -61,6 +68,7 @@ export interface ReviewReport {
   summary: string;
   revisionRequest?: string;
   version: string;
+  auditTrail?: ReportAuditEntry[];
 }
 
 export interface ThresholdSetting {
@@ -102,6 +110,7 @@ export interface ChatMessage {
   role: 'user' | 'ai';
   content: string;
   isLoading?: boolean;
+  stage?: '문서 검색 중' | '답변 생성 중' | '근거 자료 확인 중';
   sources?: RagDoc[];
 }
 
@@ -164,6 +173,14 @@ export interface AlertTemplate {
   body: string;
 }
 
+export interface UserActivity {
+  id: string;
+  action: string;
+  target: string;
+  timestamp: string;
+  critical?: boolean;
+}
+
 // Types for new Admin Views
 export interface User {
   id: string;
@@ -174,6 +191,7 @@ export interface User {
   status: 'Active' | 'Invited' | 'Deactivated';
   projectAccess: string[];
   twoFactorEnabled: boolean;
+  activity?: UserActivity[];
 }
 
 export interface ManagedRagDoc {

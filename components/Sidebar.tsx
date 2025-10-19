@@ -1,4 +1,3 @@
-
 import React from 'react';
 // FIX: Changed import paths to be relative.
 import { Mode } from '../types';
@@ -24,15 +23,17 @@ const Sidebar: React.FC<SidebarProps> = ({ mode, activeView, setActiveView, togg
     icon: React.ReactElement<any>;
   }> = ({ label, subItems, icon }) => {
     const isActive = activeView.startsWith(label);
+    const iconColor = isActive ? 'text-indigo-400' : 'text-slate-400 group-hover:text-white';
+    
     return (
       <div>
         <button
           onClick={() => setActiveView(subItems && subItems.length > 0 ? `${label} > ${subItems[0]}` : label)}
-          className={`w-full flex items-center justify-start text-left px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
-            isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+          className={`w-full flex items-center justify-start text-left px-4 py-2.5 text-base font-medium rounded-lg transition-colors duration-200 group ${
+            isActive ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'
           }`}
         >
-          {React.cloneElement(icon, { className: 'h-5 w-5' })}
+          {React.cloneElement(icon, { className: `h-5 w-5 ${iconColor}` })}
           <span className="ml-3">{label}</span>
         </button>
         {isActive && subItems && subItems.length > 0 && (
@@ -43,8 +44,8 @@ const Sidebar: React.FC<SidebarProps> = ({ mode, activeView, setActiveView, togg
                 <button
                   key={subItem}
                   onClick={() => setActiveView(fullViewName)}
-                  className={`w-full text-left block px-4 py-1.5 text-xs rounded-md ${
-                    activeView === fullViewName ? 'text-blue-600 font-semibold' : 'text-gray-500 hover:text-blue-600'
+                  className={`w-full text-left block px-4 py-1.5 text-sm rounded-md ${
+                    activeView === fullViewName ? 'text-indigo-400 font-semibold' : 'text-slate-400 hover:text-indigo-400'
                   }`}
                 >
                   {subItem}
@@ -67,23 +68,23 @@ const Sidebar: React.FC<SidebarProps> = ({ mode, activeView, setActiveView, togg
   };
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
-      <div className="px-4 py-5 flex items-center border-b border-gray-200">
-        <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <aside className="w-64 flex-shrink-0 bg-slate-800 border-r border-slate-700 flex flex-col">
+      <div className="px-4 py-5 flex items-center border-b border-slate-700">
+        <svg className="w-8 h-8 text-indigo-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M2 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M22 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M12 22V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <h1 className="ml-2 text-xl font-bold tracking-wider text-gray-900">STRUC.AI</h1>
+        <h1 className="ml-2 text-xl font-bold tracking-wider text-white">STRUC.AI</h1>
       </div>
 
       <div className="p-4 space-y-4">
         <div>
-          <label htmlFor="project-select" className="text-xs text-gray-500">프로젝트</label>
+          <label htmlFor="project-select" className="text-xs text-slate-400">프로젝트</label>
           <select 
             id="project-select" 
-            className="w-full mt-1 bg-gray-100 border-gray-300 rounded-md text-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full mt-1 bg-slate-700 border-slate-600 text-white rounded-md text-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
           >
@@ -95,9 +96,9 @@ const Sidebar: React.FC<SidebarProps> = ({ mode, activeView, setActiveView, togg
             ))}
           </select>
         </div>
-        <div className="flex bg-gray-200 rounded-md p-1">
-          <button onClick={mode === 'admin' ? toggleMode : undefined} className={`w-1/2 py-1 text-sm rounded ${mode === 'user' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}>User</button>
-          <button onClick={mode === 'user' ? toggleMode : undefined} className={`w-1/2 py-1 text-sm rounded ${mode === 'admin' ? 'bg-blue-600 text-white' : 'text-gray-600'}`}>Admin</button>
+        <div className="flex bg-slate-900 rounded-md p-1">
+          <button onClick={mode === 'admin' ? toggleMode : undefined} className={`w-1/2 py-1 text-sm rounded ${mode === 'user' ? 'bg-indigo-600 text-white' : 'text-slate-300'}`}>User</button>
+          <button onClick={mode === 'user' ? toggleMode : undefined} className={`w-1/2 py-1 text-sm rounded ${mode === 'admin' ? 'bg-indigo-600 text-white' : 'text-slate-300'}`}>Admin</button>
         </div>
       </div>
 
@@ -117,6 +118,12 @@ const Sidebar: React.FC<SidebarProps> = ({ mode, activeView, setActiveView, togg
           />
         ))}
       </nav>
+
+      <div className="px-4 py-3 border-t border-slate-700">
+        <p className="text-xs text-white font-bold text-center">
+          ⓒ OSANGTECH. all rights reserved.
+        </p>
+      </div>
     </aside>
   );
 };

@@ -1,3 +1,5 @@
+
+
 import React, { useState, useMemo, useCallback } from 'react';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
@@ -6,6 +8,7 @@ import ShmMonitorView from './components/ShmMonitorView';
 import KnowledgeQaView from './components/KnowledgeQaView';
 import ProjectManagementView from './components/ProjectManagementView';
 import AdminProjectAssetView from './components/AdminProjectAssetView';
+import AdminTeamView from './components/AdminTeamView';
 import AdminThresholdsView from './components/AdminThresholdsView';
 import AdminTemplatesView from './components/AdminTemplatesView';
 import AdminUsersView from './components/AdminUsersView';
@@ -15,8 +18,8 @@ import PlaceholderView from './components/PlaceholderView';
 import { AssetDetailModal } from './components/AssetDetailModal';
 import { EventDetailModal } from './components/EventDetailModal';
 
-import { Mode, Asset, SensorReading, ProjectDetail, ReviewReport, EventLogEntry, Anomaly } from './types';
-import { MOCK_PROJECTS, MOCK_ASSETS, MOCK_SENSOR_READINGS, MOCK_REVIEW_REPORTS, MOCK_ANOMALIES } from './constants';
+import { Mode, Asset, SensorReading, ProjectDetail, ReviewReport, EventLogEntry, Anomaly, User } from './types';
+import { MOCK_PROJECTS, MOCK_ASSETS, MOCK_SENSOR_READINGS, MOCK_REVIEW_REPORTS, MOCK_ANOMALIES, MOCK_USERS } from './constants';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('user');
@@ -27,6 +30,7 @@ const App: React.FC = () => {
   const [readings, setReadings] = useState<SensorReading[]>(MOCK_SENSOR_READINGS);
   const [reports, setReports] = useState<ReviewReport[]>(MOCK_REVIEW_REPORTS);
   const [anomalies, setAnomalies] = useState<Anomaly[]>(MOCK_ANOMALIES);
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
   
   const ALL_PROJECTS_ID = 'ALL_PROJECTS';
   
@@ -83,6 +87,19 @@ const App: React.FC = () => {
   const handleDeleteAsset = useCallback((assetId: string) => {
     setAssets(prev => prev.filter(a => a.asset_id !== assetId));
   }, []);
+  
+  const handleSaveUser = useCallback((userToSave: User) => {
+    setUsers(prev => {
+        const index = prev.findIndex(u => u.id === userToSave.id);
+        if (index > -1) {
+            const newUsers = [...prev];
+            newUsers[index] = userToSave;
+            return newUsers;
+        }
+        return [...prev, userToSave];
+    });
+  }, []);
+
 
   const {
     projectAssets,
@@ -161,6 +178,14 @@ const App: React.FC = () => {
                     onDeleteAsset={handleDeleteAsset}
                  />;
         }
+        if (subView === '팀원 관리') {
+            return <AdminTeamView 
+                    projects={projects}
+                    users={users}
+                    onSaveUser={handleSaveUser}
+                    selectedProjectId={selectedProjectId}
+                   />;
+        }
         return <ProjectManagementView project={selectedProject} assets={projectAssets} allReadings={readings} allReports={projectReports} onViewDetails={handleViewDetails} />;
       case '시스템 설정':
           if (subView === '임계값 및 정책') {
@@ -187,7 +212,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 font-sans">
+    <div className="flex h-screen bg-slate-100 font-sans">
       <Sidebar
         mode={mode}
         activeView={activeView}

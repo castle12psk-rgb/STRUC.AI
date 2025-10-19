@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 // FIX: Changed import paths to be relative.
 import { Asset, SensorReading } from '../types';
@@ -76,8 +75,8 @@ const ShiGauge: React.FC<{ value: number }> = ({ value }) => {
                 />
             </svg>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pt-4">
-                 <span className="text-4xl font-bold text-gray-800">{value.toFixed(1)}</span>
-                 <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full ${getStatusColor(status).bg} ${getStatusColor(status).text}`}>
+                 <span className="text-5xl font-bold text-gray-800">{value.toFixed(1)}</span>
+                 <span className={`text-base font-semibold px-2.5 py-0.5 rounded-full ${getStatusColor(status).bg} ${getStatusColor(status).text}`}>
                     {status}
                  </span>
             </div>
@@ -118,196 +117,138 @@ export const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, allRe
 
   const { shi, criticalSensorInfo } = useMemo(() => {
     let maxExceededRatio = 0;
-    let critInfo: { type: string, value: number, threshold: number } | null = null;
-    Object.values(latestReadings).forEach(reading => {
-      const sensor = asset.sensors.find(s => s.sensor_id === reading.sensor_id);
-      if (sensor) {
-        const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
-        if (thresholds && reading.value > thresholds.warning) {
-          const ratio = (reading.value - thresholds.warning) / (thresholds.critical - thresholds.warning);
-          if (ratio > maxExceededRatio) {
-            maxExceededRatio = Math.max(0, ratio);
-            critInfo = { type: sensor.type, value: reading.value, threshold: thresholds.warning };
-          }
+    let critInfo: { type: string, value: number, threshold: number, status: HealthStatus } | null = null;
+    
+    if (!latestReadings) return { shi: 100, criticalSensorInfo: null };
+
+    Object.values(latestReadings).forEach((reading: SensorReading) => {
+        const sensor = asset.sensors.find(s => s.sensor_id === reading.sensor_id);
+        if (sensor) {
+            const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
+            if (thresholds && reading.value > thresholds.warning) {
+                const ratio = (reading.value - thresholds.warning) / (thresholds.critical - thresholds.warning);
+                if (ratio > maxExceededRatio) {
+                    maxExceededRatio = Math.max(0, ratio);
+                    const status = reading.value >= thresholds.critical ? '위험' : '경고';
+                    critInfo = { type: sensor.type, value: reading.value, threshold: thresholds.critical, status };
+                }
+            }
         }
-      }
     });
-    const calculatedShi = (1 - Math.min(maxExceededRatio, 1) * 0.5) * 100;
-    return { shi: calculatedShi, criticalSensorInfo: critInfo };
+
+    return { 
+        shi: (1 - Math.min(maxExceededRatio, 1) * 0.5) * 100, 
+        criticalSensorInfo: critInfo 
+    };
   }, [latestReadings, asset.sensors]);
-
-  const overallStatus = getStatusFromShi(shi);
-  const overallStatusColor = getStatusColor(overallStatus);
-  const overallStatusColorDot = getStatusColorDot(overallStatus);
-
-  const getAiDiagnosis = () => {
-    switch(overallStatus) {
-      case '정상': return { title: "건전성 '정상'", message: "모든 센서 데이터가 안정적인 범위 내에 있으며, 구조물의 건전성은 '정상' 상태로 판단됩니다. 특이사항은 발견되지 않았습니다." };
-      case '주의': return { title: "건전성 '주의'", message: "일부 센서에서 '주의' 수준의 변동이 감지되었으나, 아직 임계값을 초과하지는 않았습니다. 지속적인 모니터링이 권장됩니다." };
-      case '경고':
-      case '위험':
-        const cause = criticalSensorInfo?.type === 'displacement' ? '외부 하중 증가 또는 지반 변화의 초기 징후' : '과도한 동적 하중 또는 외부 충격';
-        return {
-            title: `건전성 '${overallStatus}' - 즉시 검토 필요`,
-            message: `종합 건전성 지수(SHI)가 ${shi.toFixed(1)}로, '${overallStatus}' 상태입니다. 특히 ${criticalSensorInfo?.type} 센서 값이 경고 임계값을 초과하여 즉각적인 주의가 필요합니다. 이는 ${cause}일 수 있으므로, 즉시 상세 데이터 분석 및 현장 점검을 권고합니다.`
-        };
-      default: return { title: "상태 분석 중", message: "데이터를 분석하고 있습니다." };
-    }
-  }
-  const aiDiagnosis = getAiDiagnosis();
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg flex items-center p-2 pl-4 z-50 animate-fade-in">
-        <span className={`w-2.5 h-2.5 rounded-full ${overallStatusColorDot} mr-3`}></span>
-        <span className="font-semibold text-gray-800">{asset.name}</span>
-        <button onClick={onToggleMinimize} className="ml-4 p-1 text-gray-500 hover:bg-gray-200 rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 8a2 2 0 100 4h12a2 2 0 100-4H4z" /></svg>
-        </button>
-        <button onClick={onClose} className="ml-1 p-1 text-gray-500 hover:bg-gray-200 rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          onClick={onToggleMinimize}
+          className="bg-white p-4 rounded-lg shadow-lg flex items-center gap-3 text-lg font-bold text-slate-800 hover:bg-slate-100"
+        >
+          <span className={`w-3 h-3 rounded-full ${getStatusColorDot(getStatusFromShi(shi))}`}></span>
+          {asset.name}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1v4m0 0h-4m4 0l-5-5M4 16v4m0 0h4m-4 0l5-5m11 1v-4m0 0h-4m4 0l-5 5" /></svg>
         </button>
       </div>
     );
   }
-
+  
   return (
     <>
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out forwards;
-        }
-      `}</style>
-      <div className="fixed inset-0 bg-black bg-opacity-60 z-40 animate-fade-in" onClick={onClose} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
-        <div className="bg-gray-50 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
-          {/* Header */}
-          <div className="flex justify-between items-center p-4 bg-white border-b border-gray-200 flex-shrink-0">
-            <div className="flex items-center gap-3">
-                <span className={`w-3 h-3 rounded-full ${overallStatusColorDot}`}></span>
-                <h2 className="text-xl font-bold text-gray-800">{asset.name}</h2>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${overallStatusColor.bg} ${overallStatusColor.text}`}>{overallStatus}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={onToggleMinimize} className="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" /></svg>
-              </button>
-              <button onClick={onClose} className="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose}></div>
+      <div className="fixed top-0 right-0 h-full w-full max-w-2xl bg-slate-50 shadow-2xl z-50 flex flex-col animate-slide-in-from-right">
+        {/* Header */}
+        <div className="p-4 bg-white border-b flex justify-between items-center flex-shrink-0">
+          <div>
+            <p className="text-sm text-indigo-600 font-semibold">자산 상세 정보</p>
+            <h2 className="text-2xl font-bold text-slate-900">{asset.name}</h2>
           </div>
-          
-          {/* Body */}
-          <div className="flex-grow p-6 grid grid-cols-1 lg:grid-cols-5 gap-6 overflow-y-auto">
-             <div className="lg:col-span-3 space-y-6">
+          <div className="flex items-center gap-2">
+            <button onClick={onToggleMinimize} className="p-2 text-slate-500 hover:bg-slate-200 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg></button>
+            <button onClick={onClose} className="p-2 text-slate-500 hover:bg-slate-200 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg></button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex-grow p-6 overflow-y-auto space-y-6">
+          {/* Summary */}
+          <div className="bg-white p-6 rounded-lg border flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="font-bold text-slate-800 text-lg">종합 건전성 지수 (SHI)</h3>
+              <p className="text-base text-slate-500 max-w-xs">모든 센서 데이터를 종합하여<br />자산의 현재 건전성 상태를 나타냅니다.</p>
+              {criticalSensorInfo && (
+                <div className={`mt-3 p-2 rounded-md text-sm ${getStatusColor(criticalSensorInfo.status).bg} ${getStatusColor(criticalSensorInfo.status).text}`}>
+                  <strong>주요 이상:</strong> <span className="font-mono">{criticalSensorInfo.type} {criticalSensorInfo.value.toFixed(2)} (임계값: {criticalSensorInfo.threshold})</span>
+                </div>
+              )}
+            </div>
+            <ShiGauge value={shi} />
+          </div>
+
+          {/* Sensor Details */}
+          <div className="bg-white p-6 rounded-lg border">
+            <h3 className="font-bold text-slate-800 text-lg mb-4">센서 상세 현황</h3>
+            <div className="space-y-3">
+              {asset.sensors.map(sensor => {
+                const reading = latestReadings[sensor.sensor_id];
+                const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
+                const trend = trendReadings[sensor.sensor_id] || [];
+
+                let status: HealthStatus = '정상';
+                if (reading && thresholds) {
+                  if (reading.value >= thresholds.critical) status = '위험';
+                  else if (reading.value >= thresholds.warning) status = '경고';
+                }
+                const statusColor = getStatusColor(status);
                 
-                <div>
-                  <h4 className="text-base font-semibold text-gray-700 mb-2">AI 종합 진단</h4>
-                  <div className={`p-4 rounded-lg border ${overallStatusColor.bg.replace('100', '200/50').replace('bg-', 'border-')} ${overallStatusColor.bg}`}>
-                      <h5 className={`font-bold ${overallStatusColor.text}`}>{aiDiagnosis.title}</h5>
-                      <p className={`mt-1 text-sm ${overallStatusColor.text}`}>{aiDiagnosis.message}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-base font-semibold text-gray-700 mb-2">실시간 센서 현황</h4>
-                  <div className="space-y-2">
-                    {asset.sensors.map(sensor => {
-                        const reading = latestReadings[sensor.sensor_id];
-                        if (!reading) return null;
-                        
-                        const thresholds = MOCK_THRESHOLDS_DEFAULT[sensor.type];
-                        const isWarning = reading.value >= thresholds.warning;
-                        const isCritical = reading.value >= thresholds.critical;
-                        const valueColor = isCritical ? 'text-red-600' : isWarning ? 'text-orange-500' : 'text-gray-800';
-                        const trendData = trendReadings[sensor.sensor_id];
-
-                        return (
-                            <div key={sensor.sensor_id} className="grid grid-cols-2 items-center p-3 pr-4 rounded-lg bg-white border border-gray-200/80">
-                                <div className="flex flex-col">
-                                    <span className="font-medium text-gray-700 capitalize">{sensor.type}</span>
-                                    <span className="text-xs text-gray-500 mt-0.5">
-                                      임계: {thresholds.warning.toFixed(1)} (주의) / {thresholds.critical.toFixed(1)} (경고)
-                                    </span>
-                                </div>
-                                <div className="flex justify-end items-center gap-4">
-                                    <div className="text-right">
-                                        <span className={`font-mono font-semibold text-lg ${valueColor}`}>{reading.value.toFixed(2)}</span>
-                                        <span className="text-gray-500 ml-1.5 text-xs">{sensor.unit}</span>
-                                    </div>
-                                    {sensor.type !== 'temperature' && trendData && <Sparkline data={trendData} />}
-                                </div>
-                            </div>
-                        );
-                    })}
-                  </div>
-                </div>
-                
-                <div>
-                   <h4 className="text-base font-semibold text-gray-700 mb-2">주요 이력 (최근 30일)</h4>
-                   <div className="bg-white border border-gray-200/80 rounded-lg p-4 space-y-3 max-h-48 overflow-y-auto">
-                      {assetEventLog.length > 0 ? assetEventLog.map((log, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <div className={`mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0 ${log.type === 'Alert' ? 'bg-orange-500' : log.type === 'Maintenance' ? 'bg-gray-500' : 'bg-blue-500'}`}></div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-800">{log.description}</p>
-                            <p className="text-xs text-gray-500">{log.date}</p>
-                          </div>
-                        </div>
-                      )) : <p className="text-sm text-gray-500 text-center py-4">최근 30일 내 주요 이력이 없습니다.</p>}
-                   </div>
-                </div>
-             </div>
-             
-             <div className="lg:col-span-2">
-                 <div className="sticky top-0 flex flex-col items-center p-4 bg-white border border-gray-200/80 rounded-lg">
-                    <h4 className="text-base font-semibold text-gray-700 mb-2">종합 건전성 지수 (SHI)</h4>
-                    <ShiGauge value={shi} />
-                    <div className="w-full mt-4 space-y-4">
-                      <h4 className="text-base font-semibold text-gray-700 border-t pt-4">자산 정보</h4>
-                      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                        <dt className="text-gray-500">자산 ID</dt>
-                        <dd className="text-gray-800 font-mono">{asset.asset_id}</dd>
-                        
-                        <dt className="text-gray-500">준공년도</dt>
-                        <dd className="text-gray-800">{asset.design.year}</dd>
-
-                        <dt className="text-gray-500">주요 자재</dt>
-                        <dd className="text-gray-800">{asset.design.material}</dd>
-                        
-                        {asset.design.seismic_grade && (<>
-                            <dt className="text-gray-500">내진 등급</dt>
-                            <dd className="text-gray-800">{asset.design.seismic_grade}</dd>
-                        </>)}
-
-                        {asset.design.post_tension && (<>
-                            <dt className="text-gray-500">포스트텐션</dt>
-                            <dd className="text-green-600 font-semibold">적용</dd>
-                        </>)}
-                      </dl>
-                       <div className="mt-4 pt-3 border-t">
-                        <h5 className="text-xs text-gray-500 mb-2">태그</h5>
-                        <div className="flex flex-wrap gap-2">
-                          {asset.tags.map(tag => (
-                            <span key={tag} className="px-2 py-0.5 text-xs text-blue-800 bg-blue-100 rounded-full font-medium">{tag}</span>
-                          ))}
-                        </div>
-                      </div>
+                return (
+                  <div key={sensor.sensor_id} className="grid grid-cols-4 items-center gap-4 text-base p-2 rounded-md bg-slate-100/70">
+                    <div className="font-medium capitalize">{sensor.type}</div>
+                    <div className="text-right">
+                      {reading ? (
+                        <>
+                          <span className={`font-mono font-bold text-lg ${statusColor.text}`}>{reading.value.toFixed(2)}</span>
+                          <span className="text-sm ml-1">{sensor.unit}</span>
+                        </>
+                      ) : <span className="text-slate-400">N/A</span>}
                     </div>
-                 </div>
-             </div>
+                    <div className="flex justify-end">{trend.length > 0 && <Sparkline data={trend} />}</div>
+                    <div className={`font-semibold text-right ${statusColor.text}`}>{status}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           
-          {/* Footer */}
-          <div className="flex-shrink-0 p-4 bg-white border-t border-gray-200 flex justify-between items-center">
-            <p className="text-sm text-gray-500">최종 점검일: <span className="font-medium text-gray-700">{asset.last_inspection_date || 'N/A'}</span></p>
-            <p className="text-sm text-gray-400">STRUC.AI Diagnostic Engine</p>
+          {/* Asset Info & Event Log */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-4 rounded-lg border">
+              <h3 className="font-bold text-slate-800 text-lg mb-3">자산 정보</h3>
+              <dl className="space-y-2 text-base">
+                 <div className="flex"><dt className="w-24 text-slate-500">자산 ID</dt><dd className="font-mono text-slate-700">{asset.asset_id}</dd></div>
+                 <div className="flex"><dt className="w-24 text-slate-500">유형</dt><dd className="text-slate-700">{asset.type}</dd></div>
+                 <div className="flex"><dt className="w-24 text-slate-500">준공년도</dt><dd className="text-slate-700">{asset.design.year}</dd></div>
+                 <div className="flex"><dt className="w-24 text-slate-500">주요 자재</dt><dd className="text-slate-700">{asset.design.material}</dd></div>
+                 <div className="flex"><dt className="w-24 text-slate-500">태그</dt><dd className="flex flex-wrap gap-1">{asset.tags.map(t => <span key={t} className="text-xs bg-slate-200 px-2 py-0.5 rounded-full">{t}</span>)}</dd></div>
+              </dl>
+            </div>
+            <div className="bg-white p-4 rounded-lg border">
+              <h3 className="font-bold text-slate-800 text-lg mb-3">최근 이력</h3>
+              <ul className="space-y-2">
+                {assetEventLog.length > 0 ? assetEventLog.map((log, i) => (
+                  <li key={i} className="text-base">
+                    <span className={`font-semibold ${log.type === 'Alert' ? 'text-orange-600' : 'text-slate-800'}`}>{log.description}</span>
+                    <p className="text-sm text-slate-400">{log.date}</p>
+                  </li>
+                )) : <p className="text-base text-slate-500">최근 이벤트가 없습니다.</p>}
+              </ul>
+            </div>
           </div>
+
         </div>
       </div>
     </>

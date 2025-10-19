@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 // FIX: Changed import paths to be relative.
 import { ProjectDetail, Asset, SensorReading, ReviewReport, TeamMember, ProjectDocument, ProjectActivity } from '../types';
@@ -19,36 +18,36 @@ const getStatusColorDot = (status: HealthStatus): string => {
     case '경고': return 'bg-orange-500';
     case '주의': return 'bg-yellow-400';
     case '정상': return 'bg-green-500';
-    default: return 'bg-gray-500';
+    default: return 'bg-slate-500';
   }
 };
 
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={`bg-white border border-gray-200 rounded-xl shadow-sm ${className}`}>
+  <div className={`bg-white border border-slate-200 rounded-lg shadow-sm ${className}`}>
     {children}
   </div>
 );
 
 const ProjectHeader: React.FC<{ project: ProjectDetail, assetCount: number, alertCount: number, reportCount: number }> = ({ project, assetCount, alertCount, reportCount }) => (
     <div>
-        <h2 className="text-3xl font-bold text-gray-900">{project.name}</h2>
-        <p className="mt-1 text-gray-600">{project.description}</p>
+        <h2 className="text-4xl font-bold text-slate-900">{project.name}</h2>
+        <p className="mt-1 text-lg text-slate-600">{project.description}</p>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="p-5">
-                <h4 className="text-sm font-semibold text-gray-500">총 관리 자산</h4>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{assetCount} <span className="text-lg font-medium">개</span></p>
+                <h4 className="text-base font-semibold text-slate-500">총 관리 자산</h4>
+                <p className="text-4xl font-bold text-slate-800 mt-2">{assetCount} <span className="text-xl font-medium">개</span></p>
             </Card>
             <Card className="p-5">
-                <h4 className="text-sm font-semibold text-gray-500">주의/경고 자산</h4>
-                <p className={`text-3xl font-bold mt-2 ${alertCount > 0 ? 'text-orange-600' : 'text-gray-800'}`}>{alertCount} <span className="text-lg font-medium">개</span></p>
+                <h4 className="text-base font-semibold text-slate-500">주의/경고 자산</h4>
+                <p className={`text-4xl font-bold mt-2 ${alertCount > 0 ? 'text-orange-600' : 'text-slate-800'}`}>{alertCount} <span className="text-xl font-medium">개</span></p>
             </Card>
             <Card className="p-5">
-                <h4 className="text-sm font-semibold text-gray-500">진행중 리포트</h4>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{reportCount} <span className="text-lg font-medium">건</span></p>
+                <h4 className="text-base font-semibold text-slate-500">진행중 리포트</h4>
+                <p className="text-4xl font-bold text-slate-800 mt-2">{reportCount} <span className="text-xl font-medium">건</span></p>
             </Card>
             <Card className="p-5">
-                <h4 className="text-sm font-semibold text-gray-500">참여 팀원</h4>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{project.team.length} <span className="text-lg font-medium">명</span></p>
+                <h4 className="text-base font-semibold text-slate-500">참여 팀원</h4>
+                <p className="text-4xl font-bold text-slate-800 mt-2">{project.team.length} <span className="text-xl font-medium">명</span></p>
             </Card>
         </div>
     </div>
@@ -92,44 +91,44 @@ const AssetTable: React.FC<{ assets: Asset[], allReadings: SensorReading[], onVi
     return (
         <Card className="p-0 overflow-hidden">
             <div className="p-4 border-b">
-                <h3 className="text-lg font-bold text-gray-800">관리 자산 목록</h3>
+                <h3 className="text-xl font-bold text-slate-800">관리 자산 목록</h3>
             </div>
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
                         <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">자산명</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">주요 이상 데이터</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">최종 점검일</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
+                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">상태</th>
+                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">자산명</th>
+                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">주요 이상 데이터</th>
+                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">최종 점검일</th>
+                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-slate-500 uppercase tracking-wider">관리</th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-slate-200">
                         {assetHealthData.map(asset => {
                             const statusColor = getStatusColorDot(asset.overallStatus);
                             return (
-                                <tr key={asset.asset_id} className="hover:bg-gray-50">
+                                <tr key={asset.asset_id} className="hover:bg-slate-50">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <div className={`w-3 h-3 rounded-full ${statusColor} mr-2`}></div>
-                                            <span className="text-sm font-semibold">{asset.overallStatus}</span>
+                                            <span className="text-base font-semibold">{asset.overallStatus}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-bold text-gray-900">{asset.name}</div>
-                                        <div className="text-xs text-gray-500 font-mono">{asset.asset_id}</div>
+                                        <div className="text-base font-bold text-slate-900">{asset.name}</div>
+                                        <div className="text-sm text-slate-500 font-mono">{asset.asset_id}</div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td className="px-6 py-4 whitespace-nowrap text-base">
                                         {asset.criticalSensorInfo ? (
                                             <div className={`font-mono font-semibold ${asset.criticalSensorInfo.status === '위험' ? 'text-red-600' : 'text-orange-600'}`}>
                                                 {asset.criticalSensorInfo.type}: {asset.criticalSensorInfo.value.toFixed(2)} {asset.criticalSensorInfo.unit}
                                             </div>
-                                        ) : <span className="text-gray-400">-</span>}
+                                        ) : <span className="text-slate-400">-</span>}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{asset.last_inspection_date || 'N/A'}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onClick={() => onViewDetails(asset.asset_id)} className="text-blue-600 hover:text-blue-800">상세보기</button>
+                                    <td className="px-6 py-4 whitespace-nowrap text-base text-slate-500">{asset.last_inspection_date || 'N/A'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-base font-medium">
+                                        <button onClick={() => onViewDetails(asset.asset_id)} className="text-indigo-600 hover:text-indigo-800">상세보기</button>
                                     </td>
                                 </tr>
                             )
@@ -145,47 +144,47 @@ const ProjectSidebar: React.FC<{ project: ProjectDetail }> = ({ project }) => {
     const getDocIcon = (type: ProjectDocument['type']) => {
         switch (type) {
             case '리포트': return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2-2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg>;
-            case '설계도': return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>;
-            default: return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z" clipRule="evenodd" /></svg>;
+            case '설계도': return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>;
+            default: return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6z" clipRule="evenodd" /></svg>;
         }
     }
     return (
         <div className="space-y-6">
             <Card className="p-4">
-                <h3 className="text-base font-bold text-gray-800 mb-3">참여 팀원</h3>
+                <h3 className="text-lg font-bold text-slate-800 mb-3">참여 팀원</h3>
                 <div className="space-y-3">
                     {project.team.map(member => (
                         <div key={member.id} className="flex items-center gap-3">
                             <img src={member.avatarUrl} alt={member.name} className="w-9 h-9 rounded-full" />
                             <div>
-                                <p className="text-sm font-semibold text-gray-900">{member.name}</p>
-                                <p className="text-xs text-gray-500">{member.role}</p>
+                                <p className="text-base font-semibold text-slate-900">{member.name}</p>
+                                <p className="text-sm text-slate-500">{member.role}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             </Card>
             <Card className="p-4">
-                <h3 className="text-base font-bold text-gray-800 mb-3">주요 문서</h3>
+                <h3 className="text-lg font-bold text-slate-800 mb-3">주요 문서</h3>
                 <div className="space-y-2">
                     {project.documents.map(doc => (
-                        <a href={doc.link} key={doc.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100">
+                        <a href={doc.link} key={doc.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-slate-100">
                             <div className="flex-shrink-0">{getDocIcon(doc.type)}</div>
                             <div>
-                                <p className="text-sm font-medium text-gray-800 leading-tight">{doc.name}</p>
-                                <p className="text-xs text-gray-500">Updated: {doc.lastUpdated}</p>
+                                <p className="text-base font-medium text-slate-800 leading-tight">{doc.name}</p>
+                                <p className="text-sm text-slate-500">Updated: {doc.lastUpdated}</p>
                             </div>
                         </a>
                     ))}
                 </div>
             </Card>
             <Card className="p-4">
-                <h3 className="text-base font-bold text-gray-800 mb-3">최근 활동</h3>
+                <h3 className="text-lg font-bold text-slate-800 mb-3">최근 활동</h3>
                 <div className="space-y-3">
                     {project.activity.map(act => (
-                        <div key={act.id} className="text-sm">
-                            <p className="text-gray-800">{act.description}</p>
-                            <p className="text-xs text-gray-400">{act.user} · {act.timestamp}</p>
+                        <div key={act.id} className="text-base">
+                            <p className="text-slate-800">{act.description}</p>
+                            <p className="text-sm text-slate-400">{act.user} · {act.timestamp}</p>
                         </div>
                     ))}
                 </div>
@@ -230,7 +229,7 @@ const ProjectManagementView: React.FC<ProjectManagementViewProps> = ({ project, 
 
     if (!project) {
         return (
-            <Card className="p-6 text-center text-gray-500">
+            <Card className="p-6 text-center text-slate-500">
                 프로젝트 정보를 불러올 수 없습니다.
             </Card>
         );

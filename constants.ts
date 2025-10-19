@@ -339,9 +339,37 @@ const generateReadings = (): SensorReading[] => {
           case 'strain': value = 800 + Math.random() * 200; break;
           case 'temperature': value = 15 + Math.random() * 10; break;
         }
-        if (asset.asset_id === 'BRG-SEOUL-001' && sensor.type === 'displacement' && i < 5) {
-            value = 8.5 + Math.random() * 1; // Anomaly
+
+        const isRecent = i < 5;
+
+        // '주의' 상태 자산 (3개)
+        // 1. 한강교 A3 교각 (기존)
+        if (isRecent && asset.asset_id === 'BRG-SEOUL-001' && sensor.type === 'displacement') {
+            value = 8.5 + Math.random() * 0.5; // SHI ~90 (주의)
         }
+        // 2. 강남파이낸스센터
+        if (isRecent && asset.asset_id === 'BLD-GANGNAM-007' && sensor.type === 'strain') {
+            value = 1280 + Math.random() * 40; // SHI ~85 (주의)
+        }
+        // 3. A-3 파이프랙
+        if (isRecent && asset.asset_id === 'PLT-ULSAN-PIPE-03' && sensor.type === 'temperature') {
+            value = 66 + Math.random() * 2; // SHI ~80 (주의)
+        }
+
+        // '경고' 상태 자산 (3개)
+        // 1. KTX 제2한강철교
+        if (isRecent && asset.asset_id === 'KR-BRIDGE-05' && sensor.type === 'accelerometer') {
+            value = 0.165 + Math.random() * 0.01; // SHI ~70 (경고)
+        }
+        // 2. LCT 랜드마크 타워
+        if (isRecent && asset.asset_id === 'LCT-LANDMARK-TOWER' && sensor.type === 'strain') {
+            value = 1400 + Math.random() * 30; // SHI ~65 (경고)
+        }
+        // 3. 구 대관령 터널
+        if (isRecent && asset.asset_id === 'TUN-GW-003' && sensor.type === 'displacement') {
+            value = 10.8 + Math.random() * 0.4; // SHI ~60 (경고)
+        }
+        
         readings.push({ asset_id: asset.asset_id, sensor_id: sensor.sensor_id, timestamp, value });
       }
     });
@@ -373,12 +401,88 @@ export const MOCK_ASSET_EVENT_LOG: { [key: string]: { date: string; description:
 export const MOCK_REVIEW_REPORTS: ReviewReport[] = [
     { id: 'REP-251016-001', assetName: '한강교 A3 교각', assetId: 'BRG-SEOUL-001', status: '검토 중', author: '박민준', reviewer: '이영희', lastModifiedDate: '2025-10-16', safetyGrade: 'C등급 (보통)', summary: '균열폭 기준 초과, 상세 분석 필요.', version: 'v1.0' },
     { id: 'REP-250912-003', assetName: '강남파이낸스센터', assetId: 'BLD-GANGNAM-007', status: '수정 요청', author: '김현우', reviewer: '이영희', lastModifiedDate: '2025-09-15', safetyGrade: 'B등급 (양호)', summary: '변형률 데이터 분석 보강 필요.', revisionRequest: '변형률 센서 데이터의 장기 추세 분석을 추가해주세요.', version: 'v1.1' },
-    { id: 'REP-250801-015', assetName: '한강교 A3 교각', assetId: 'BRG-SEOUL-001', status: '승인됨', author: '박민준', reviewer: '이영희', approver: '김철수', lastModifiedDate: '2025-08-05', approvalDate: '2025-08-10', safetyGrade: 'B등급 (양호)', summary: '정기 점검 결과 특이사항 없음.', version: 'v1.0' },
+    { 
+      id: 'REP-250801-015', 
+      assetName: '한강교 A3 교각', 
+      assetId: 'BRG-SEOUL-001', 
+      status: '승인됨', 
+      author: '박민준', 
+      reviewer: '이영희', 
+      approver: '김철수', 
+      lastModifiedDate: '2025-08-05', 
+      approvalDate: '2025-08-10', 
+      safetyGrade: 'B등급 (양호)', 
+      summary: '정기 점검 결과 특이사항 없음.', 
+      version: 'v1.0',
+      auditTrail: [
+        { status: '작성됨', user: '박민준', timestamp: '2025-08-01 14:30' },
+        { status: '제출됨', user: '박민준', timestamp: '2025-08-01 17:00' },
+        { status: '검토됨', user: '이영희', timestamp: '2025-08-05 11:00', notes: '데이터 및 분석 내용 이상 없음. 승인 요청합니다.' },
+        { status: '승인됨', user: '김철수', timestamp: '2025-08-10 09:45' }
+      ]
+    },
     { id: 'REP-250925-001', assetName: 'KTX 제2한강철교', assetId: 'KR-BRIDGE-05', status: '검토 중', author: '정다인', reviewer: '이영희', lastModifiedDate: '2025-09-25', safetyGrade: 'B등급 (양호)', summary: '열차 통과 시 진동 데이터 분석 결과, 허용치 이내임.', version: 'v1.0' },
-    { id: 'REP-251002-001', assetName: 'LCT 랜드마크 타워', assetId: 'LCT-LANDMARK-TOWER', status: '승인됨', author: '한지민', reviewer: '최현우', approver: '김철수', lastModifiedDate: '2025-10-02', approvalDate: '2025-10-08', safetyGrade: 'A등급 (최상)', summary: '태풍 대비 풍하중 모니터링 결과 이상 없음.', version: 'v1.0' },
+    { 
+      id: 'REP-251002-001', 
+      assetName: 'LCT 랜드마크 타워', 
+      assetId: 'LCT-LANDMARK-TOWER', 
+      status: '승인됨', 
+      author: '한지민', 
+      reviewer: '최현우', 
+      approver: '김철수', 
+      lastModifiedDate: '2025-10-02', 
+      approvalDate: '2025-10-08', 
+      safetyGrade: 'A등급 (최상)', 
+      summary: '태풍 대비 풍하중 모니터링 결과 이상 없음.', 
+      version: 'v1.0',
+      auditTrail: [
+        { status: '작성됨', user: '한지민', timestamp: '2025-10-02 10:00' },
+        { status: '제출됨', user: '한지민', timestamp: '2025-10-02 11:30' },
+        { status: '검토됨', user: '최현우', timestamp: '2025-10-06 16:00', notes: '확인 완료.' },
+        { status: '승인됨', user: '김철수', timestamp: '2025-10-08 10:10' }
+      ]
+    },
     { id: 'REP-251001-001', assetName: '충주댐 본댐', assetId: 'DAM-CJ-MAIN', status: '승인 대기', author: '윤서준', reviewer: '김철수', lastModifiedDate: '2025-10-01', safetyGrade: 'B등급 (양호)', summary: '누수량 및 변위 계측 결과 안정 범위 내 유지 중.', version: 'v1.0' },
-    { id: 'REP-250820-003', assetName: '서울월드컵경기장 지붕', assetId: 'STADIUM-SWS-ROOF', status: '승인됨', author: '이영희', reviewer: '김철수', approver: '김철수', lastModifiedDate: '2025-08-20', approvalDate: '2025-08-25', safetyGrade: 'B등급 (양호)', summary: '하절기 케이블 장력 측정 결과 특이사항 없음.', version: 'v1.0' },
-    { id: 'REP-251010-002', assetName: '수원 화성 동북포루', assetId: 'HWASUNG-WALL-E03', status: '승인됨', author: '강지원', reviewer: '김철수', approver: '김철수', lastModifiedDate: '2025-10-10', approvalDate: '2025-10-15', safetyGrade: 'A등급 (최상)', summary: '정기 계측 결과 구조적 안정성 양호.', version: 'v2.1' },
+    { 
+      id: 'REP-250820-003', 
+      assetName: '서울월드컵경기장 지붕', 
+      assetId: 'STADIUM-SWS-ROOF', 
+      status: '승인됨', 
+      author: '이영희', 
+      reviewer: '김철수', 
+      approver: '김철수', 
+      lastModifiedDate: '2025-08-20', 
+      approvalDate: '2025-08-25', 
+      safetyGrade: 'B등급 (양호)', 
+      summary: '하절기 케이블 장력 측정 결과 특이사항 없음.', 
+      version: 'v1.0',
+      auditTrail: [
+        { status: '작성됨', user: '이영희', timestamp: '2025-08-20 13:00' },
+        { status: '제출됨', user: '이영희', timestamp: '2025-08-20 13:05' },
+        { status: '검토됨', user: '김철수', timestamp: '2025-08-22 18:00', notes: '확인.'},
+        { status: '승인됨', user: '김철수', timestamp: '2025-08-25 11:00' }
+      ]
+    },
+    { 
+      id: 'REP-251010-002', 
+      assetName: '수원 화성 동북포루', 
+      assetId: 'HWASUNG-WALL-E03', 
+      status: '승인됨', 
+      author: '강지원', 
+      reviewer: '김철수', 
+      approver: '김철수', 
+      lastModifiedDate: '2025-10-10', 
+      approvalDate: '2025-10-15', 
+      safetyGrade: 'A등급 (최상)', 
+      summary: '정기 계측 결과 구조적 안정성 양호.', 
+      version: 'v2.1',
+      auditTrail: [
+        { status: '작성됨', user: '강지원', timestamp: '2025-10-10 09:00' },
+        { status: '제출됨', user: '강지원', timestamp: '2025-10-10 09:30' },
+        { status: '검토됨', user: '김철수', timestamp: '2025-10-12 14:00', notes: 'v2.1 업데이트 내용 확인.' },
+        { status: '승인됨', user: '김철수', timestamp: '2025-10-15 10:00' }
+      ]
+    },
 ];
 
 export const MOCK_ANOMALIES: Anomaly[] = [
@@ -455,10 +559,45 @@ export const MOCK_ALERT_TEMPLATES: AlertTemplate[] = [
 
 // Mock data for new Admin Views
 export const MOCK_USERS: User[] = [
-    { id: 'user-001', name: '김철수', email: 'cskim@struc.ai', role: 'Admin', lastLogin: '2025-10-16 10:30', status: 'Active', projectAccess: ['STRUC-SEOUL-BRIDGE-01', 'STRUC-PLANT-002', 'STRUC-DAM-CHUNGJU-01', 'STRUC-HERITAGE-SUWON-01'], twoFactorEnabled: true },
-    { id: 'user-002', name: '이영희', email: 'yhlee@struc.ai', role: 'Project Manager', lastLogin: '2025-10-16 09:15', status: 'Active', projectAccess: ['STRUC-SEOUL-BRIDGE-01', 'STRUC-RAIL-003', 'STRUC-STADIUM-WC-01'], twoFactorEnabled: true },
-    { id: 'user-003', name: '박민준', email: 'mjpark@struc.ai', role: 'Engineer', lastLogin: '2025-10-15 17:45', status: 'Active', projectAccess: ['STRUC-SEOUL-BRIDGE-01', 'STRUC-TUNNEL-GANGWON-01', 'STRUC-SUBWAY-SEOUL-09'], twoFactorEnabled: false },
-    { id: 'user-004', name: '최현우', email: 'hwchoi@struc.ai', role: 'Inspector', lastLogin: '2025-10-14 11:20', status: 'Active', projectAccess: ['STRUC-PLANT-002', 'STRUC-BUSAN-TOWER-01', 'STRUC-PORT-INCHEON-01'], twoFactorEnabled: true },
+    { 
+      id: 'user-001', name: '김철수', email: 'cskim@struc.ai', role: 'Admin', lastLogin: '2025-10-16 10:30', status: 'Active', 
+      projectAccess: ['STRUC-SEOUL-BRIDGE-01', 'STRUC-PLANT-002', 'STRUC-DAM-CHUNGJU-01', 'STRUC-HERITAGE-SUWON-01'], 
+      twoFactorEnabled: true,
+      activity: [
+        { id: 'act-u1-1', action: '로그인', target: '시스템', timestamp: '2025-10-16 10:30:15' },
+        { id: 'act-u1-2', action: '리포트 승인', target: 'REP-251010-002', timestamp: '2025-10-15 10:00:00' },
+        { id: 'act-u1-3', action: '사용자 역할 변경', target: '이영희 (Engineer -> Project Manager)', timestamp: '2025-10-14 11:05:00', critical: true },
+        { id: 'act-u1-4', action: '자산 추가', target: '한강교 A3 교각', timestamp: '2025-10-12 09:40:21' },
+      ]
+    },
+    { 
+      id: 'user-002', name: '이영희', email: 'yhlee@struc.ai', role: 'Project Manager', lastLogin: '2025-10-16 09:15', status: 'Active', 
+      projectAccess: ['STRUC-SEOUL-BRIDGE-01', 'STRUC-RAIL-003', 'STRUC-STADIUM-WC-01'], 
+      twoFactorEnabled: true,
+      activity: [
+        { id: 'act-u2-1', action: '로그인', target: '시스템', timestamp: '2025-10-16 09:15:45' },
+        { id: 'act-u2-2', action: '리포트 검토', target: 'REP-251016-001', timestamp: '2025-10-16 09:20:11' },
+        { id: 'act-u2-3', action: '자산 정보 조회', target: 'KTX 제2한강철교', timestamp: '2025-10-15 14:30:00' },
+      ]
+    },
+    { 
+      id: 'user-003', name: '박민준', email: 'mjpark@struc.ai', role: 'Engineer', lastLogin: '2025-10-15 17:45', status: 'Active', 
+      projectAccess: ['STRUC-SEOUL-BRIDGE-01', 'STRUC-TUNNEL-GANGWON-01', 'STRUC-SUBWAY-SEOUL-09'], 
+      twoFactorEnabled: false,
+      activity: [
+        { id: 'act-u3-1', action: '로그인', target: '시스템', timestamp: '2025-10-15 17:45:03' },
+        { id: 'act-u3-2', action: '리포트 제출', target: 'REP-251016-001', timestamp: '2025-10-16 17:00:00' },
+        { id: 'act-u3-3', action: 'QA 질의', target: '기술자료 QA', timestamp: '2025-10-15 18:00:15' },
+      ]
+    },
+    { 
+      id: 'user-004', name: '최현우', email: 'hwchoi@struc.ai', role: 'Inspector', lastLogin: '2025-10-14 11:20', status: 'Active', 
+      projectAccess: ['STRUC-PLANT-002', 'STRUC-BUSAN-TOWER-01', 'STRUC-PORT-INCHEON-01'], 
+      twoFactorEnabled: true,
+      activity: [
+        { id: 'act-u4-1', action: '로그인', target: '시스템', timestamp: '2025-10-14 11:20:00' },
+      ]
+    },
     { id: 'user-005', name: '정다인', email: 'dijung@struc.ai', role: 'Engineer', lastLogin: '초대 대기 중', status: 'Invited', projectAccess: [], twoFactorEnabled: false },
     { id: 'user-006', name: '강지원', email: 'jwkang@struc.ai', role: 'Project Manager', lastLogin: '2025-09-28 14:00', status: 'Deactivated', projectAccess: ['STRUC-BUSAN-TOWER-01', 'STRUC-PORT-INCHEON-01', 'STRUC-HERITAGE-SUWON-01'], twoFactorEnabled: true },
 ];
